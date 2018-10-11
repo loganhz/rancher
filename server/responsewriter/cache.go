@@ -19,7 +19,13 @@ func Cache(handler http.Handler, suffixes ...string) http.Handler {
 		if i >= 0 {
 			for _, suffix := range suffixes {
 				if suffix == r.URL.Path[i+1:] {
-					w.Header().Set("Cache-Control", "private, max-age=86400, stale-while-revalidate=604800")
+					w.Header().Set("Access-Control-Allow-Origin", "*")
+					w.Header().Set("Age", "206018")
+					w.Header().Set("Cache-Control", "max-age=31536000, public")
+					w.Header().Set("Expires", "Tue, 12 Oct 2021 23:24:11 GMT")
+					w.Header().Set("Last-Modified", "Sat, 01 Jan 2000 00:00:00 GMT")
+					w.Header().Set("Timing-Allow-Origin", "*")
+					w.Header().Set("Vary", "Accept-Encoding")
 				}
 			}
 		}
