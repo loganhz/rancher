@@ -84,7 +84,7 @@ func Start(ctx context.Context, httpPort, httpsPort int, scaledContext *config.S
 	root.PathPrefix("/v1-saml").Handler(samlRoot)
 
 	// UI
-	uiContent := responsewriter.NewMiddlewareChain(responsewriter.Gzip, responsewriter.CacheMiddleware("json", "js", "css")).Handler(ui.Content())
+	uiContent := responsewriter.NewMiddlewareChain(responsewriter.CacheMiddleware("json", "js", "css")).Handler(ui.Content())
 	root.PathPrefix("/assets").Handler(uiContent)
 	root.PathPrefix("/translations").Handler(uiContent)
 	root.Handle("/humans.txt", uiContent)
