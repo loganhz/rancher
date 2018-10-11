@@ -19,6 +19,7 @@ func Cache(handler http.Handler, suffixes ...string) http.Handler {
 		if i >= 0 {
 			for _, suffix := range suffixes {
 				if suffix == r.URL.Path[i+1:] {
+					w.Header().Del("Last-Modified")
 					w.Header().Set("Cache-Control", "max-age=315360000")
 				}
 			}
