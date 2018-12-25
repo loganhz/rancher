@@ -2,7 +2,7 @@ stages:
 - name: aa
   steps:
   - runScriptConfig:
-      image: busybox
+      image: ubuntu:xenial
       shellScript: |-
         COMMIT=$(git rev-parse --short HEAD)
         echo $COMMIT
