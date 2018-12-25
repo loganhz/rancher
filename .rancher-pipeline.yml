@@ -1,0 +1,9 @@
+stages:
+- name: aa
+  steps:
+  - runScriptConfig:
+      image: busybox
+      shellScript: |-
+        COMMIT=$(git rev-parse --short HEAD)
+        echo $COMMIT
+timeout: 60
