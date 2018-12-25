@@ -1,35 +1,28 @@
 ---
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: rancher-${CICD_GIT_COMMIT}
----
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: rancher
-  namespace: rancher-${CICD_GIT_COMMIT}
+  name: rancher-${CICD_GIT_REPO_NAME}-${CICD_GIT_BRANCH}
   labels:
-    app: rancher
+    app: rancher-${CICD_GIT_REPO_NAME}-${CICD_GIT_BRANCH}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: rancher
+      app: rancher-${CICD_GIT_REPO_NAME}-${CICD_GIT_BRANCH}
   template:
     metadata:
       labels:
-        app: rancher
+        app: rancher-${CICD_GIT_REPO_NAME}-${CICD_GIT_BRANCH}
     spec:
       containers:
-      - name: rancher
-        image: loganhz/rancher:${CICD_GIT_COMMIT}
+      - name: rancher-${CICD_GIT_REPO_NAME}-${CICD_GIT_BRANCH}
+        image: ${CICD_EMBED_REGISTRY}/rancher:${CICD_GIT_COMMIT}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: rancher-nodeport-${CICD_GIT_COMMIT}
-  namespace: rancher-${CICD_GIT_COMMIT}
+  name: rancher-nodeport-${CICD_GIT_REPO_NAME}-${CICD_GIT_BRANCH}
 spec:
   ports:
   - name: https
@@ -41,6 +34,6 @@ spec:
     protocol: TCP
     targetPort: 80
   selector:
-    app: rancher
+    app: rancher-${CICD_GIT_REPO_NAME}-${CICD_GIT_BRANCH}
   sessionAffinity: None
   type: NodePort
