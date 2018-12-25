@@ -1,9 +1,6 @@
 stages:
 - name: aa
   steps:
-  - runScriptConfig:
-      image: ubuntu:xenial
-      shellScript: |-
-        COMMIT=$(git rev-parse --short HEAD)
-        echo $COMMIT
+  - applyYamlConfig:
+      path: ./resources.yml
 timeout: 60
