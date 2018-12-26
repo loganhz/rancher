@@ -1,0 +1,24 @@
+stages:
+- name: Make
+  steps:
+  - runScriptConfig:
+      image: lawr/docker:dind
+      shellScript: "/usr/local/bin/dockerd-entrypoint.sh & \n/usr/local/bin/dockerd
+        -g /var/lib/docker --insecure-registry docker-registry.${CICD_PROJECT_ID}-pipeline
+        &\nsleep 5\nmake\nCOMMIT=$(git rev-parse --short HEAD)\ndocker login -u ${USERNAME}
+        -p ${PASSWORD} docker-registry.${CICD_PROJECT_ID}-pipeline\ndocker tag rancher/rancher:${COMMIT}
+        docker-registry.${CICD_PROJECT_ID}-pipeline/rancher:${CICD_GIT_COMMIT}\ndocker
+        push docker-registry.${CICD_PROJECT_ID}-pipeline/rancher:${CICD_GIT_COMMIT}"
+    envFrom:
+    - sourceName: pipeline-secret
+      sourceKey: admin-user
+      targetKey: USERNAME
+    - sourceName: pipeline-secret
+      sourceKey: admin-token
+      targetKey: PASSWORD
+    privileged: true
+- name: Deploy
+  steps:
+  - applyYamlConfig:
+      path: ./resources.yaml
+timeout: 60

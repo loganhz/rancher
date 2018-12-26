@@ -1,0 +1,46 @@
+---
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: rancher-${CICD_GIT_BRANCH}
+  namespace: default
+  labels:
+    app: rancher-${CICD_GIT_BRANCH}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rancher-${CICD_GIT_BRANCH}
+  template:
+    metadata:
+      labels:
+        app: rancher-${CICD_GIT_BRANCH}
+    spec:
+      containers:
+      - args:
+          - --add-local=true
+          - --k8s-mode=embedded
+        name: rancher-${CICD_GIT_BRANCH}
+        image: ${CICD_LOCAL_REGISTRY}/rancher:${CICD_GIT_COMMIT}
+        ports:
+          - containerPort: 443
+            name: https
+            protocol: TCP
+      imagePullSecrets:
+      - name: pipeline-docker-registry
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rancher-nodeport-${CICD_GIT_BRANCH}
+  namespace: default
+spec:
+  ports:
+  - name: https
+    port: 443
+    protocol: TCP
+    targetPort: 443
+  selector:
+    app: rancher-${CICD_GIT_BRANCH}
+  sessionAffinity: None
+  type: NodePort
