@@ -15,6 +15,7 @@ import (
 
 	"github.com/rancher/rancher/pkg/controllers/management/compose/common"
 	"github.com/rancher/rancher/pkg/ref"
+	"github.com/rancher/rancher/pkg/systemaccount"
 	corev1 "github.com/rancher/types/apis/core/v1"
 	mgmtv3 "github.com/rancher/types/apis/management.cattle.io/v3"
 	"github.com/rancher/types/apis/project.cattle.io/v3"
@@ -38,6 +39,7 @@ func Register(ctx context.Context, user *config.UserContext, kubeConfigGetter co
 	appClient := user.Management.Project.Apps("")
 	stackLifecycle := &Lifecycle{
 		KubeConfigGetter:      kubeConfigGetter,
+		SystemAccountManager:  systemaccount.NewManager(user.Management),
 		TokenClient:           user.Management.Management.Tokens(""),
 		UserClient:            user.Management.Management.Users(""),
 		UserManager:           user.Management.UserManager,
@@ -55,6 +57,7 @@ func Register(ctx context.Context, user *config.UserContext, kubeConfigGetter co
 
 type Lifecycle struct {
 	KubeConfigGetter      common.KubeConfigGetter
+	SystemAccountManager  *systemaccount.Manager
 	UserManager           user.Manager
 	TokenClient           mgmtv3.TokenInterface
 	UserClient            mgmtv3.UserInterface
@@ -272,12 +275,15 @@ func (l *Lifecycle) createAppRevision(obj *v3.App, template, notes string, faile
 }
 
 func (l *Lifecycle) writeKubeConfig(obj *v3.App, tempDir string) (string, error) {
+	var token string
+
 	userID := obj.Annotations["field.cattle.io/creatorId"]
 	user, err := l.UserClient.Get(userID, metav1.GetOptions{})
 	if err != nil {
-		return "", err
+		token, err = l.SystemAccountManager.GetOrCreateProjectSystemToken(obj.Namespace)
+	} else {
+		token, err = l.UserManager.EnsureToken(helmTokenPrefix+user.Name, description, user.Name)
 	}
-	token, err := l.UserManager.EnsureToken(helmTokenPrefix+user.Name, description, user.Name)
 	if err != nil {
 		return "", err
 	}
