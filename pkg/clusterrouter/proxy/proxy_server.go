@@ -227,7 +227,7 @@ func (r *RemoteService) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 		er.Error(rw, req, err)
 		return
 	}
-	httpProxy := proxy.NewUpgradeAwareHandler(&u, transport, true, false, er)
+	httpProxy := proxy.NewUpgradeAwareHandler(&u, transport, true, true, er)
 	httpProxy.ServeHTTP(rw, req)
 }
 
@@ -272,7 +272,7 @@ func (s *SimpleProxy) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	if s.overrideHostHeader {
 		req.Host = u.Host
 	}
-	httpProxy := proxy.NewUpgradeAwareHandler(&u, s.transport, true, false, er)
+	httpProxy := proxy.NewUpgradeAwareHandler(&u, s.transport, true, true, er)
 	httpProxy.ServeHTTP(rw, req)
 
 }
