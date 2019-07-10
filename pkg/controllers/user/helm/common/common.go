@@ -16,7 +16,6 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
-	"github.com/rancher/rancher/pkg/jailer"
 	"github.com/rancher/rancher/pkg/namespace"
 	v3 "github.com/rancher/types/apis/project.cattle.io/v3"
 	"github.com/sirupsen/logrus"
@@ -207,11 +206,6 @@ func DeleteCharts(tempDirs *HelmPath, port string, obj *v3.App) error {
 func JailCommand(cmd *exec.Cmd, jailPath string) (*exec.Cmd, error) {
 	if os.Getenv("CATTLE_DEV_MODE") != "" {
 		return cmd, nil
-	}
-
-	cred, err := jailer.GetUserCred()
-	if err != nil {
-		return nil, errors.WithMessage(err, "get user cred error")
 	}
 
 	return cmd, nil
