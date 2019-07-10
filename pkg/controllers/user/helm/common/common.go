@@ -215,9 +215,5 @@ func JailCommand(cmd *exec.Cmd, jailPath string) (*exec.Cmd, error) {
 		return nil, errors.WithMessage(err, "get user cred error")
 	}
 
-	cmd.SysProcAttr = &syscall.SysProcAttr{}
-	cmd.SysProcAttr.Credential = cred
-	cmd.SysProcAttr.Chroot = jailPath
-	cmd.Env = jailer.WhitelistEnvvars(cmd.Env)
 	return cmd, nil
 }
