@@ -154,10 +154,7 @@ func (n *nodeSyncer) needUpdate(key string, node *corev1.Node) (bool, error) {
 
 func (m *nodesSyncer) sync(key string, machine *v3.Node) (runtime.Object, error) {
 	logrus.Infof("========== loganww2d22w2 %s/%s/%s==========", key, m.clusterNamespace, AllNodeKey)
-	if key == fmt.Sprintf("%s/%s", m.clusterNamespace, AllNodeKey) {
-		return nil, m.reconcileAll()
-	}
-	return nil, nil
+	return nil, m.reconcileAll()
 }
 
 func (m *nodesSyncer) updateNodeAndNode(node *corev1.Node, obj *v3.Node) (*corev1.Node, *v3.Node, error) {
