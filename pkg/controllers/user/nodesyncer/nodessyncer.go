@@ -2,7 +2,6 @@ package nodesyncer
 
 import (
 	"context"
-	"fmt"
 	"reflect"
 	"sort"
 	"strings"
