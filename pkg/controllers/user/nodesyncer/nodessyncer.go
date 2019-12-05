@@ -600,7 +600,7 @@ func statusEqualTest(proposed, existing corev1.NodeStatus) bool {
 
 func (m *nodesSyncer) convertNodeToMachine(node *corev1.Node, existing *v3.Node, pods map[string][]*corev1.Pod) (*v3.Node, error) {
 	logrus.Infof("========== loganwww ==========")
-        var machine *v3.Node
+	var machine *v3.Node
 	if existing == nil {
 		machine = &v3.Node{
 			Spec:   v3.NodeSpec{},
