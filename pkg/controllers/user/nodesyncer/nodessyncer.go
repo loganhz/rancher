@@ -328,7 +328,7 @@ func (m *nodesSyncer) reconcileAll() error {
 		return err
 	}
 
-	logrus.Infof("========== loganww22w2 3==========")
+	logrus.Infof("========== loganww22w2 3==========%d", len(nodes))
 	nodeMap := make(map[string]*corev1.Node)
 	for _, node := range nodes {
 		nodeMap[node.Name] = node
