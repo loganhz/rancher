@@ -102,6 +102,7 @@ func Register(ctx context.Context, cluster *config.UserContext, kubeConfigGetter
 }
 
 func (n *nodeSyncer) sync(key string, node *corev1.Node) (runtime.Object, error) {
+	logrus.Infof("========== loganxxww22w2 ==========")
 	needUpdate, err := n.needUpdate(key, node)
 	if err != nil {
 		return nil, err
@@ -152,6 +153,7 @@ func (n *nodeSyncer) needUpdate(key string, node *corev1.Node) (bool, error) {
 }
 
 func (m *nodesSyncer) sync(key string, machine *v3.Node) (runtime.Object, error) {
+	logrus.Infof("========== loganww2d22w2 ==========")
 	if key == fmt.Sprintf("%s/%s", m.clusterNamespace, AllNodeKey) {
 		return nil, m.reconcileAll()
 	}
@@ -312,6 +314,7 @@ func (m *nodesSyncer) getNodePlan(node *v3.Node) (v3.RKEConfigNodePlan, error) {
 }
 
 func (m *nodesSyncer) reconcileAll() error {
+	logrus.Infof("========== loganww22w2 ==========")
 	// skip reconcile if we are restoring from backup,
 	// this is needed to avoid adding/deleting replaced nodes that might be in the
 	// snapshots before the cluster restore/reconcile is complete
