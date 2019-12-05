@@ -176,14 +176,19 @@ func (m *nodesSyncer) updateNodeAndNode(node *corev1.Node, obj *v3.Node) (*corev
 }
 
 func (m *nodesSyncer) updateLabels(node *corev1.Node, obj *v3.Node, nodePlan v3.RKEConfigNodePlan) (*corev1.Node, *v3.Node, error) {
+	logrus.Infof("========== start updateLabels   ==========")
 	finalMap, changed := computeDelta(node.Labels, nodePlan.Labels, obj.Spec.MetadataUpdate.Labels, onlyKubeLabels)
 	if !changed {
 		return node, obj, nil
 	}
 
+	logrus.Infof("========== after changed   ==========")
+
 	node, obj = node.DeepCopy(), obj.DeepCopy()
 	node.Labels = finalMap
 	obj.Spec.MetadataUpdate.Labels = v3.MapDelta{}
+
+	logrus.Infof("========== updateLabels before return   ==========")
 
 	return m.updateNodeAndNode(node, obj)
 }
@@ -202,6 +207,7 @@ func (m *nodesSyncer) updateAnnotations(node *corev1.Node, obj *v3.Node, nodePla
 }
 
 func (m *nodesSyncer) syncLabels(key string, obj *v3.Node) (runtime.Object, error) {
+	logrus.Infof("========== start syncLabels   ==========")
 	if obj == nil {
 		return nil, nil
 	}
@@ -220,6 +226,8 @@ func (m *nodesSyncer) syncLabels(key string, obj *v3.Node) (runtime.Object, erro
 	if err != nil {
 		return obj, err
 	}
+
+	logrus.Infof("========== syncLabels before return   ==========")
 
 	_, obj, err = m.updateAnnotations(node, obj, nodePlan)
 	return obj, err
