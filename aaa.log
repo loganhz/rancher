@@ -1,0 +1,960 @@
+./.dapper ci
+Sending build context to Docker daemon 163.7 MB
+Step 1/29 : FROM ubuntu:18.04
+ ---> 775349758637
+Step 2/29 : ARG DAPPER_HOST_ARCH
+ ---> Using cache
+ ---> 4834954ec08a
+Step 3/29 : ENV HOST_ARCH ${DAPPER_HOST_ARCH} ARCH ${DAPPER_HOST_ARCH}
+ ---> Using cache
+ ---> e2f110bddcd5
+Step 4/29 : ENV CATTLE_HELM_VERSION v2.14.3-rancher1
+ ---> Using cache
+ ---> 32fb643240de
+Step 5/29 : ENV CATTLE_K3S_VERSION v0.8.0
+ ---> Using cache
+ ---> dd50333e6617
+Step 6/29 : ENV CATTLE_ETCD_VERSION v3.3.14
+ ---> Using cache
+ ---> e62bf44b780f
+Step 7/29 : ENV GO111MODULE off
+ ---> Using cache
+ ---> 97769773b4b5
+Step 8/29 : RUN apt-get update &&     apt-get install -y gcc ca-certificates git wget curl vim less file xz-utils unzip &&     rm -f /bin/sh && ln -s /bin/bash /bin/sh
+ ---> Using cache
+ ---> 4a83d1ec9d94
+Step 9/29 : RUN curl -sLf https://github.com/rancher/machine-package/releases/download/v0.15.0-rancher5-3/docker-machine-${ARCH}.tar.gz | tar xvzf - -C /usr/bin
+ ---> Using cache
+ ---> 132c4deabb41
+Step 10/29 : ENV GOLANG_ARCH_amd64 amd64 GOLANG_ARCH_arm armv6l GOLANG_ARCH_arm64 arm64 GOLANG_ARCH GOLANG_ARCH_${ARCH} GOPATH /go PATH /go/bin:/usr/local/go/bin:${PATH} SHELL /bin/bash
+ ---> Using cache
+ ---> 26c9d62f0362
+Step 11/29 : RUN wget -O - https://storage.googleapis.com/golang/go1.13.4.linux-${!GOLANG_ARCH}.tar.gz | tar -xzf - -C /usr/local
+ ---> Using cache
+ ---> 96df2d21ff6f
+Step 12/29 : RUN if [ "${ARCH}" == "amd64" ]; then     curl -sL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s v1.20.0;     fi
+ ---> Using cache
+ ---> f0d9e04d680e
+Step 13/29 : ENV DOCKER_URL_amd64 https://get.docker.com/builds/Linux/x86_64/docker-1.10.3 DOCKER_URL_arm https://github.com/rancher/docker/releases/download/v1.10.3-ros1/docker-1.10.3_arm DOCKER_URL_arm64 https://github.com/rancher/docker/releases/download/v1.10.3-ros1/docker-1.10.3_arm64 DOCKER_URL DOCKER_URL_${ARCH}
+ ---> Using cache
+ ---> 9b8f268eba35
+Step 14/29 : ENV HELM_URL_amd64 https://github.com/rancher/helm/releases/download/${CATTLE_HELM_VERSION}/rancher-helm HELM_URL_arm64 https://github.com/rancher/helm/releases/download/${CATTLE_HELM_VERSION}/rancher-helm-arm64 HELM_URL HELM_URL_${ARCH} TILLER_URL_amd64 https://github.com/rancher/helm/releases/download/${CATTLE_HELM_VERSION}/rancher-tiller TILLER_URL_arm64 https://github.com/rancher/helm/releases/download/${CATTLE_HELM_VERSION}/rancher-tiller-arm64 TILLER_URL TILLER_URL_${ARCH} K3S_URL_amd64 https://github.com/rancher/k3s/releases/download/${CATTLE_K3S_VERSION}/k3s K3S_URL_arm64 https://github.com/rancher/k3s/releases/download/${CATTLE_K3S_VERSION}/k3s-arm64 K3S_URL K3S_URL_${ARCH} ETCD_URL_amd64 https://github.com/etcd-io/etcd/releases/download/${CATTLE_ETCD_VERSION}/etcd-${CATTLE_ETCD_VERSION}-linux-amd64.tar.gz ETCD_URL_arm64 https://github.com/etcd-io/etcd/releases/download/${CATTLE_ETCD_VERSION}/etcd-${CATTLE_ETCD_VERSION}-linux-arm64.tar.gz ETCD_URL ETCD_URL_${ARCH}
+ ---> Using cache
+ ---> fdffc892e6a4
+Step 15/29 : RUN curl -sLf ${!HELM_URL} > /usr/bin/rancher-helm &&     curl -sLf ${!TILLER_URL} > /usr/bin/rancher-tiller &&     curl -sLf ${!K3S_URL} > /usr/bin/k3s &&     curl -sfL ${!ETCD_URL} | tar xvzf - --strip-components=1 -C /usr/bin/ etcd-${CATTLE_ETCD_VERSION}-linux-${ARCH}/etcd &&     chmod +x /usr/bin/rancher-helm /usr/bin/rancher-tiller /usr/bin/k3s &&     ln -s /usr/bin/rancher-helm /usr/bin/helm &&     ln -s /usr/bin/rancher-tiller /usr/bin/tiller &&     rancher-helm init -c &&     rancher-helm plugin install https://github.com/rancher/helm-unittest &&     mkdir -p /go/src/github.com/rancher/rancher/.kube &&     ln -s /etc/rancher/k3s/k3s.yaml /go/src/github.com/rancher/rancher/.kube/k3s.yaml
+ ---> Using cache
+ ---> 6c85529ea250
+Step 16/29 : RUN wget -O - ${!DOCKER_URL} > /usr/bin/docker && chmod +x /usr/bin/docker
+ ---> Using cache
+ ---> 24b19fb5fcec
+Step 17/29 : ENV KUBECTL_URL https://storage.googleapis.com/kubernetes-release/release/v1.11.0/bin/linux/${ARCH}/kubectl
+ ---> Using cache
+ ---> 5daab3b1df90
+Step 18/29 : RUN wget -O - ${KUBECTL_URL} > /usr/bin/kubectl && chmod +x /usr/bin/kubectl
+ ---> Using cache
+ ---> 5469dc892b73
+Step 19/29 : RUN apt-get update &&     apt-get install -y tox python3.7 python3-dev python3.7-dev libffi-dev libssl-dev
+ ---> Using cache
+ ---> 50c08309aeac
+Step 20/29 : ENV HELM_HOME /root/.helm
+ ---> Using cache
+ ---> f47d12079a6b
+Step 21/29 : ENV DAPPER_ENV REPO TAG DRONE_TAG SYSTEM_CHART_DEFAULT_BRANCH
+ ---> Using cache
+ ---> ef0ff75483a5
+Step 22/29 : ENV DAPPER_SOURCE /go/src/github.com/rancher/rancher/
+ ---> Using cache
+ ---> 8e667fcd4a71
+Step 23/29 : ENV DAPPER_OUTPUT ./bin ./dist
+ ---> Using cache
+ ---> 15e8481e5f9c
+Step 24/29 : ENV DAPPER_DOCKER_SOCKET true
+ ---> Using cache
+ ---> f85147b8b96e
+Step 25/29 : ENV TRASH_CACHE ${DAPPER_SOURCE}/.trash-cache
+ ---> Using cache
+ ---> 142f6aa256ec
+Step 26/29 : ENV HOME ${DAPPER_SOURCE}
+ ---> Using cache
+ ---> 6b3c106c85d0
+Step 27/29 : WORKDIR ${DAPPER_SOURCE}
+ ---> Using cache
+ ---> 7ff2102982c4
+Step 28/29 : ENTRYPOINT ./scripts/entry
+ ---> Using cache
+ ---> e196e1ca1427
+Step 29/29 : CMD ci
+ ---> Using cache
+ ---> b5d9b3405fd3
+Successfully built b5d9b3405fd3
+Sending build context to Docker daemon 163.8 MB
+Step 1/2 : FROM rancher:update-node-labels
+ ---> b5d9b3405fd3
+Step 2/2 : COPY . /go/src/github.com/rancher/rancher/
+ ---> 881810c00add
+Removing intermediate container 2ac11007794a
+Successfully built 881810c00add
+Running: build-server
+ARCH: amd64
+CHART_REPO: dev
+CHART_VERSION: 0.0.0-dirty.9a58c786c
+VERSION: 9a58c786c-dirty
+Running: build-agent
+ARCH: amd64
+CHART_REPO: dev
+CHART_VERSION: 0.0.0-dirty.9a58c786c
+VERSION: 9a58c786c-dirty
+Starting rancher server
+pongRunning tests
+GLOB sdist-make: /go/src/github.com/rancher/rancher/tests/integration/setup.py
+flake8 create: /go/src/github.com/rancher/rancher/tests/integration/.tox/flake8
+flake8 installdeps: -rrequirements.txt
+flake8 inst: /go/src/github.com/rancher/rancher/tests/integration/.tox/dist/IntegrationTests-0.1.zip
+flake8 installed: apipkg==1.5,argcomplete==1.10.3,asn1crypto==1.2.0,atomicwrites==1.3.0,attrs==19.3.0,cachetools==3.1.1,certifi==2019.11.28,cffi==1.13.2,chardet==3.0.4,Click==7.0,client-python==0.1.0,cryptography==2.6.1,entrypoints==0.3,execnet==1.7.1,flake8==3.7.7,Flask==1.0.2,google-auth==1.7.1,idna==2.8,importlib-metadata==1.2.0,IntegrationTests==0.1,itsdangerous==1.1.0,Jinja2==2.10.3,kubernetes==9.0.0,MarkupSafe==1.1.1,mccabe==0.6.1,more-itertools==8.0.0,netaddr==0.7.19,oauthlib==3.1.0,pkg-resources==0.0.0,pluggy==0.13.1,py==1.8.0,pyasn1==0.4.8,pyasn1-modules==0.2.7,pycodestyle==2.5.0,pycparser==2.19,pyflakes==2.1.1,PyJWT==1.7.1,pytest==4.4.1,pytest-forked==1.1.3,pytest-repeat==0.8.0,pytest-xdist==1.28.0,python-dateutil==2.8.1,PyYAML==5.1,requests==2.21.0,requests-oauthlib==1.3.0,rsa==4.0,six==1.13.0,urllib3==1.24.3,websocket-client==0.56.0,Werkzeug==0.16.0,zipp==0.6.0
+flake8 runtests: PYTHONHASHSEED='1331675294'
+flake8 runtests: commands[0] | flake8 suite
+py37 create: /go/src/github.com/rancher/rancher/tests/integration/.tox/py37
+py37 installdeps: -rrequirements.txt
+py37 inst: /go/src/github.com/rancher/rancher/tests/integration/.tox/dist/IntegrationTests-0.1.zip
+py37 installed: apipkg==1.5,argcomplete==1.10.3,asn1crypto==1.2.0,atomicwrites==1.3.0,attrs==19.3.0,cachetools==3.1.1,certifi==2019.11.28,cffi==1.13.2,chardet==3.0.4,Click==7.0,client-python==0.1.0,cryptography==2.6.1,entrypoints==0.3,execnet==1.7.1,flake8==3.7.7,Flask==1.0.2,google-auth==1.7.1,idna==2.8,importlib-metadata==1.2.0,IntegrationTests==0.1,itsdangerous==1.1.0,Jinja2==2.10.3,kubernetes==9.0.0,MarkupSafe==1.1.1,mccabe==0.6.1,more-itertools==8.0.0,netaddr==0.7.19,oauthlib==3.1.0,pkg-resources==0.0.0,pluggy==0.13.1,py==1.8.0,pyasn1==0.4.8,pyasn1-modules==0.2.7,pycodestyle==2.5.0,pycparser==2.19,pyflakes==2.1.1,PyJWT==1.7.1,pytest==4.4.1,pytest-forked==1.1.3,pytest-repeat==0.8.0,pytest-xdist==1.28.0,python-dateutil==2.8.1,PyYAML==5.1,requests==2.21.0,requests-oauthlib==1.3.0,rsa==4.0,six==1.13.0,urllib3==1.24.3,websocket-client==0.56.0,Werkzeug==0.16.0,zipp==0.6.0
+py37 runtests: PYTHONHASHSEED='1331675294'
+py37 runtests: commands[0] | pytest --durations=20 -rfE -v -m not nonparallel -n 2
+============================= test session starts ==============================
+platform linux -- Python 3.7.5, pytest-4.4.1, py-1.8.0, pluggy-0.13.1 -- /go/src/github.com/rancher/rancher/tests/integration/.tox/py37/bin/python3.7
+cachedir: .pytest_cache
+rootdir: /go/src/github.com/rancher/rancher/tests/integration
+plugins: repeat-0.8.0, xdist-1.28.0, forked-1.1.3
+gw0 I / gw1 I
+[gw0] linux Python 3.7.5 cwd: /go/src/github.com/rancher/rancher/tests/integration/suite
+[gw1] linux Python 3.7.5 cwd: /go/src/github.com/rancher/rancher/tests/integration/suite
+[gw0] Python 3.7.5 (default, Nov  7 2019, 10:50:52)  -- [GCC 8.3.0]
+[gw1] Python 3.7.5 (default, Nov  7 2019, 10:50:52)  -- [GCC 8.3.0]
+gw0 [11] / gw1 [11]
+
+scheduling tests via LoadScheduling
+
+test_node.py::test_node_fields 
+test_node.py::test_node_template_delete 
+[gw0] [  9%] PASSED test_node.py::test_node_fields 
+test_node.py::test_cloud_credential_delete 
+[gw1] [ 18%] PASSED test_node.py::test_node_template_delete 
+test_node.py::test_writing_config_to_disk 
+[gw1] [ 27%] PASSED test_node.py::test_writing_config_to_disk 
+[gw0] [ 36%] PASSED test_node.py::test_cloud_credential_delete 
+test_node.py::test_node_driver_schema 
+[gw0] [ 45%] PASSED test_node.py::test_node_driver_schema 
+test_node.py::test_admin_access_to_node_template 
+[gw0] [ 54%] PASSED test_node.py::test_admin_access_to_node_template 
+test_node.py::test_user_access_to_other_template 
+test_node.py::test_user_access_to_node_template 
+[gw0] [ 63%] PASSED test_node.py::test_user_access_to_node_template 
+test_node.py::test_no_node_template 
+[gw1] [ 72%] PASSED test_node.py::test_user_access_to_other_template 
+test_node.py::test_admin_access_user_template 
+[gw0] [ 81%] PASSED test_node.py::test_no_node_template 
+test_node.py::test_add_node_label 
+[gw1] [ 90%] PASSED test_node.py::test_admin_access_user_template 
+[gw0] [100%] FAILED test_node.py::test_add_node_label 
+
+=================================== FAILURES ===================================
+_____________________________ test_add_node_label ______________________________
+[gw0] linux -- Python 3.7.5 /go/src/github.com/rancher/rancher/tests/integration/.tox/py37/bin/python3.7
+
+admin_mc = <suite.conftest.ManagementContext object at 0x7f861c368cd0>
+
+    def test_add_node_label(admin_mc):
+        testLabel = "test-label"
+        client = admin_mc.client
+        nodes = client.list_node(clusterId="local")
+        assert nodes.data[0].clusterId == nodes.data[1].clusterId
+        nodeId = nodes.data[0].id
+        node = client.by_id_node(nodeId)
+    
+        # Make sure there is no test label and add test label
+        if "labels" in node:
+            node_labels = node.labels.data_dict()
+        else:
+            node_labels = {}
+    
+        assert testLabel not in node_labels
+        node_labels[testLabel] = "bar"
+        client.update(node, labels=node_labels)
+    
+        # Label should be added
+        time.sleep(2)
+        node = client.by_id_node(nodeId)
+>       node_labels = node.labels.data_dict()
+
+test_node.py:374: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = {'baseType': 'node', 'clusterId': 'local', 'conditions': [{'status': 'True', 'type': 'Initialized'}, {'message': 'Runn...ate checks...', 'type': 'node', 'unschedulable': False, 'uuid': '20e7c95f-1751-11ea-ad05-0242ac110002', 'worker': True}
+k = 'labels'
+
+    def __getattr__(self, k):
+        if self._is_list() and k in LIST_METHODS:
+            return getattr(self.data, k)
+>       return getattr(self.__dict__, k)
+E       AttributeError: 'dict' object has no attribute 'labels'
+
+../.tox/py37/lib/python3.7/site-packages/rancher.py:89: AttributeError
+=========================== short test summary info ============================
+FAILED test_node.py::test_add_node_label
+========================== slowest 20 test durations ===========================
+2.12s teardown suite/test_node.py::test_writing_config_to_disk
+2.08s teardown suite/test_node.py::test_admin_access_user_template
+2.06s teardown suite/test_node.py::test_admin_access_to_node_template
+2.03s call     suite/test_node.py::test_add_node_label
+1.53s call     suite/test_node.py::test_user_access_to_other_template
+0.85s setup    suite/test_node.py::test_node_fields
+0.85s setup    suite/test_node.py::test_node_template_delete
+0.59s call     suite/test_node.py::test_cloud_credential_delete
+0.58s setup    suite/test_node.py::test_user_access_to_node_template
+0.52s call     suite/test_node.py::test_user_access_to_node_template
+0.51s setup    suite/test_node.py::test_admin_access_user_template
+0.50s setup    suite/test_node.py::test_no_node_template
+0.15s call     suite/test_node.py::test_node_template_delete
+0.12s call     suite/test_node.py::test_writing_config_to_disk
+0.06s teardown suite/test_node.py::test_user_access_to_other_template
+0.05s teardown suite/test_node.py::test_no_node_template
+0.03s teardown suite/test_node.py::test_user_access_to_node_template
+0.02s call     suite/test_node.py::test_admin_access_to_node_template
+0.02s call     suite/test_node.py::test_admin_access_user_template
+0.01s teardown suite/test_node.py::test_node_template_delete
+===================== 1 failed, 10 passed in 8.38 seconds ======================
+ERROR: InvocationError: '/go/src/github.com/rancher/rancher/tests/integration/.tox/py37/bin/pytest --durations=20 -rfE -v -m not nonparallel -n 2'
+___________________________________ summary ____________________________________
+  flake8: commands succeeded
+ERROR:   py37: commands failed
+Stopping rancher server
+Cleanup DIND
+***RANCHER LOGS***
+Starting rancher server
+2019/12/05 11:18:42 [INFO] Rancher version 9a58c786c-dirty is starting
+2019/12/05 11:18:42 [INFO] Rancher arguments {ACMEDomains:[] AddLocal:true Embedded:false KubeConfig: HTTPListenPort:8080 HTTPSListenPort:8443 K8sMode:auto Debug:false NoCACerts:false ListenConfig:<nil> AuditLogPath:/var/log/auditlog/rancher-api-audit.log AuditLogMaxage:10 AuditLogMaxsize:100 AuditLogMaxbackup:10 AuditLevel:0 Features:}
+2019/12/05 11:18:42 [INFO] Listening on /tmp/log.sock
+2019/12/05 11:18:42 [INFO] Running etcd --data-dir=management-state/etcd
+2019-12-05 11:18:42.646950 W | pkg/flags: unrecognized environment variable ETCD_URL_arm64=https://github.com/etcd-io/etcd/releases/download/v3.3.14/etcd-v3.3.14-linux-arm64.tar.gz
+2019-12-05 11:18:42.646982 W | pkg/flags: unrecognized environment variable ETCD_URL_amd64=https://github.com/etcd-io/etcd/releases/download/v3.3.14/etcd-v3.3.14-linux-amd64.tar.gz
+2019-12-05 11:18:42.646989 W | pkg/flags: unrecognized environment variable ETCD_URL=ETCD_URL_amd64
+2019-12-05 11:18:42.647005 I | etcdmain: etcd Version: 3.3.14
+2019-12-05 11:18:42.647011 I | etcdmain: Git SHA: 5cf5d88a1
+2019-12-05 11:18:42.647017 I | etcdmain: Go Version: go1.12.9
+2019-12-05 11:18:42.647022 I | etcdmain: Go OS/Arch: linux/amd64
+2019-12-05 11:18:42.647028 I | etcdmain: setting maximum number of CPUs to 2, total number of available CPUs is 2
+2019-12-05 11:18:42.647311 I | embed: listening for peers on http://localhost:2380
+2019-12-05 11:18:42.647413 I | embed: listening for client requests on localhost:2379
+2019-12-05 11:18:42.650839 I | etcdserver: name = default
+2019-12-05 11:18:42.650871 I | etcdserver: data dir = management-state/etcd
+2019-12-05 11:18:42.650879 I | etcdserver: member dir = management-state/etcd/member
+2019-12-05 11:18:42.650885 I | etcdserver: heartbeat = 100ms
+2019-12-05 11:18:42.650890 I | etcdserver: election = 1000ms
+2019-12-05 11:18:42.650896 I | etcdserver: snapshot count = 100000
+2019-12-05 11:18:42.650905 I | etcdserver: advertise client URLs = http://localhost:2379
+2019-12-05 11:18:42.650912 I | etcdserver: initial advertise peer URLs = http://localhost:2380
+2019-12-05 11:18:42.650920 I | etcdserver: initial cluster = default=http://localhost:2380
+2019-12-05 11:18:42.655729 I | etcdserver: starting member 8e9e05c52164694d in cluster cdf818194e3a8c32
+2019-12-05 11:18:42.655756 I | raft: 8e9e05c52164694d became follower at term 0
+2019-12-05 11:18:42.655767 I | raft: newRaft 8e9e05c52164694d [peers: [], term: 0, commit: 0, applied: 0, lastindex: 0, lastterm: 0]
+2019-12-05 11:18:42.655773 I | raft: 8e9e05c52164694d became follower at term 1
+2019-12-05 11:18:42.661603 W | auth: simple token is not cryptographically signed
+2019-12-05 11:18:42.664424 I | etcdserver: starting server... [version: 3.3.14, cluster version: to_be_decided]
+2019-12-05 11:18:42.665218 I | etcdserver: 8e9e05c52164694d as single-node; fast-forwarding 9 ticks (election ticks 10)
+2019-12-05 11:18:42.665452 I | etcdserver/membership: added member 8e9e05c52164694d [http://localhost:2380] to cluster cdf818194e3a8c32
+2019-12-05 11:18:43.156099 I | raft: 8e9e05c52164694d is starting a new election at term 1
+2019-12-05 11:18:43.156144 I | raft: 8e9e05c52164694d became candidate at term 2
+2019-12-05 11:18:43.156159 I | raft: 8e9e05c52164694d received MsgVoteResp from 8e9e05c52164694d at term 2
+2019-12-05 11:18:43.156172 I | raft: 8e9e05c52164694d became leader at term 2
+2019-12-05 11:18:43.156180 I | raft: raft.node: 8e9e05c52164694d elected leader 8e9e05c52164694d at term 2
+2019-12-05 11:18:43.156312 I | etcdserver: setting up the initial cluster version to 3.3
+2019-12-05 11:18:43.157193 N | etcdserver/membership: set the initial cluster version to 3.3
+2019-12-05 11:18:43.157227 I | etcdserver/api: enabled capabilities for version 3.3
+2019-12-05 11:18:43.157251 I | etcdserver: published {Name:default ClientURLs:[http://localhost:2379]} to cluster cdf818194e3a8c32
+2019-12-05 11:18:43.157305 I | embed: ready to serve client requests
+2019-12-05 11:18:43.157825 N | embed: serving insecure client requests on 127.0.0.1:2379, this is strongly discouraged!
+2019/12/05 11:18:43 [INFO] Waiting for k3s to start
+time="2019-12-05T11:18:43Z" level=info msg="Preparing data dir /var/lib/rancher/k3s/data/de37a675b342fcd56e57fd5707882786b0e0c840862d6ddc1e8f5c391fb424c9"
+2019/12/05 11:18:44 [INFO] Waiting for k3s to start
+time="2019-12-05T11:18:44.930813772Z" level=info msg="Starting k3s v0.8.0 (f867995f)"
+time="2019-12-05T11:18:45.080294306Z" level=info msg="Running kube-apiserver --advertise-port=6443 --allow-privileged=true --api-audiences=unknown --authorization-mode=Node,RBAC --basic-auth-file=/var/lib/rancher/k3s/server/cred/passwd --bind-address=127.0.0.1 --cert-dir=/var/lib/rancher/k3s/server/tls/temporary-certs --client-ca-file=/var/lib/rancher/k3s/server/tls/client-ca.crt --enable-admission-plugins=NodeRestriction --etcd-servers=http://localhost:2379 --insecure-port=0 --kubelet-client-certificate=/var/lib/rancher/k3s/server/tls/client-kube-apiserver.crt --kubelet-client-key=/var/lib/rancher/k3s/server/tls/client-kube-apiserver.key --proxy-client-cert-file=/var/lib/rancher/k3s/server/tls/client-auth-proxy.crt --proxy-client-key-file=/var/lib/rancher/k3s/server/tls/client-auth-proxy.key --requestheader-allowed-names=system:auth-proxy --requestheader-client-ca-file=/var/lib/rancher/k3s/server/tls/request-header-ca.crt --requestheader-extra-headers-prefix=X-Remote-Extra- --requestheader-group-headers=X-Remote-Group --requestheader-username-headers=X-Remote-User --secure-port=6444 --service-account-issuer=k3s --service-account-key-file=/var/lib/rancher/k3s/server/tls/service.key --service-account-signing-key-file=/var/lib/rancher/k3s/server/tls/service.key --service-cluster-ip-range=10.43.0.0/16 --storage-backend=etcd3 --tls-cert-file=/var/lib/rancher/k3s/server/tls/serving-kube-apiserver.crt --tls-private-key-file=/var/lib/rancher/k3s/server/tls/serving-kube-apiserver.key"
+E1205 11:18:45.335477    5028 prometheus.go:138] failed to register depth metric admission_quota_controller: duplicate metrics collector registration attempted
+E1205 11:18:45.335832    5028 prometheus.go:150] failed to register adds metric admission_quota_controller: duplicate metrics collector registration attempted
+E1205 11:18:45.335878    5028 prometheus.go:162] failed to register latency metric admission_quota_controller: duplicate metrics collector registration attempted
+E1205 11:18:45.335923    5028 prometheus.go:174] failed to register work_duration metric admission_quota_controller: duplicate metrics collector registration attempted
+E1205 11:18:45.335951    5028 prometheus.go:189] failed to register unfinished_work_seconds metric admission_quota_controller: duplicate metrics collector registration attempted
+E1205 11:18:45.335974    5028 prometheus.go:202] failed to register longest_running_processor_microseconds metric admission_quota_controller: duplicate metrics collector registration attempted
+W1205 11:18:45.461887    5028 genericapiserver.go:315] Skipping API batch/v2alpha1 because it has no resources.
+W1205 11:18:45.480090    5028 genericapiserver.go:315] Skipping API node.k8s.io/v1alpha1 because it has no resources.
+E1205 11:18:45.496057    5028 prometheus.go:138] failed to register depth metric admission_quota_controller: duplicate metrics collector registration attempted
+E1205 11:18:45.496098    5028 prometheus.go:150] failed to register adds metric admission_quota_controller: duplicate metrics collector registration attempted
+E1205 11:18:45.496139    5028 prometheus.go:162] failed to register latency metric admission_quota_controller: duplicate metrics collector registration attempted
+E1205 11:18:45.496170    5028 prometheus.go:174] failed to register work_duration metric admission_quota_controller: duplicate metrics collector registration attempted
+E1205 11:18:45.496200    5028 prometheus.go:189] failed to register unfinished_work_seconds metric admission_quota_controller: duplicate metrics collector registration attempted
+E1205 11:18:45.496224    5028 prometheus.go:202] failed to register longest_running_processor_microseconds metric admission_quota_controller: duplicate metrics collector registration attempted
+time="2019-12-05T11:18:45.507098354Z" level=info msg="Running kube-scheduler --bind-address=127.0.0.1 --kubeconfig=/var/lib/rancher/k3s/server/cred/scheduler.kubeconfig --port=10251 --secure-port=0"
+time="2019-12-05T11:18:45.513302045Z" level=info msg="Running kube-controller-manager --allocate-node-cidrs=true --bind-address=127.0.0.1 --cluster-cidr=10.42.0.0/16 --cluster-signing-cert-file=/var/lib/rancher/k3s/server/tls/server-ca.crt --cluster-signing-key-file=/var/lib/rancher/k3s/server/tls/server-ca.key --kubeconfig=/var/lib/rancher/k3s/server/cred/controller.kubeconfig --port=10252 --root-ca-file=/var/lib/rancher/k3s/server/tls/server-ca.crt --secure-port=0 --service-account-private-key-file=/var/lib/rancher/k3s/server/tls/service.key --use-service-account-credentials=true"
+W1205 11:18:45.523467    5028 authorization.go:47] Authorization is disabled
+W1205 11:18:45.523483    5028 authentication.go:55] Authentication is disabled
+time="2019-12-05T11:18:45.551968131Z" level=info msg="Creating CRD listenerconfigs.k3s.cattle.io"
+E1205 11:18:45.573825    5028 reflector.go:126] k8s.io/client-go/informers/factory.go:130: Failed to list *v1.StatefulSet: statefulsets.apps is forbidden: User "system:kube-scheduler" cannot list resource "statefulsets" in API group "apps" at the cluster scope
+E1205 11:18:45.578157    5028 reflector.go:126] k8s.io/client-go/informers/factory.go:130: Failed to list *v1.PersistentVolume: persistentvolumes is forbidden: User "system:kube-scheduler" cannot list resource "persistentvolumes" in API group "" at the cluster scope
+E1205 11:18:45.581176    5028 reflector.go:126] k8s.io/kubernetes/cmd/kube-scheduler/app/server.go:223: Failed to list *v1.Pod: pods is forbidden: User "system:kube-scheduler" cannot list resource "pods" in API group "" at the cluster scope
+E1205 11:18:45.607886    5028 reflector.go:126] k8s.io/client-go/informers/factory.go:130: Failed to list *v1.Node: nodes is forbidden: User "system:kube-scheduler" cannot list resource "nodes" in API group "" at the cluster scope
+E1205 11:18:45.609326    5028 reflector.go:126] k8s.io/client-go/informers/factory.go:130: Failed to list *v1beta1.PodDisruptionBudget: poddisruptionbudgets.policy is forbidden: User "system:kube-scheduler" cannot list resource "poddisruptionbudgets" in API group "policy" at the cluster scope
+E1205 11:18:45.611103    5028 leaderelection.go:306] error retrieving resource lock kube-system/kube-controller-manager: endpoints "kube-controller-manager" is forbidden: User "system:kube-controller-manager" cannot get resource "endpoints" in API group "" in the namespace "kube-system"
+E1205 11:18:45.611679    5028 reflector.go:126] k8s.io/client-go/informers/factory.go:130: Failed to list *v1.ReplicationController: replicationcontrollers is forbidden: User "system:kube-scheduler" cannot list resource "replicationcontrollers" in API group "" at the cluster scope
+E1205 11:18:45.611693    5028 reflector.go:126] k8s.io/client-go/informers/factory.go:130: Failed to list *v1.PersistentVolumeClaim: persistentvolumeclaims is forbidden: User "system:kube-scheduler" cannot list resource "persistentvolumeclaims" in API group "" at the cluster scope
+E1205 11:18:45.612513    5028 reflector.go:126] k8s.io/client-go/informers/factory.go:130: Failed to list *v1.ReplicaSet: replicasets.apps is forbidden: User "system:kube-scheduler" cannot list resource "replicasets" in API group "apps" at the cluster scope
+E1205 11:18:45.628472    5028 reflector.go:126] k8s.io/client-go/informers/factory.go:130: Failed to list *v1.Service: services is forbidden: User "system:kube-scheduler" cannot list resource "services" in API group "" at the cluster scope
+E1205 11:18:45.628805    5028 reflector.go:126] k8s.io/client-go/informers/factory.go:130: Failed to list *v1.StorageClass: storageclasses.storage.k8s.io is forbidden: User "system:kube-scheduler" cannot list resource "storageclasses" in API group "storage.k8s.io" at the cluster scope
+2019/12/05 11:18:45 [INFO] Waiting for k3s to start
+E1205 11:18:45.688714    5028 controller.go:147] Unable to perform initial Kubernetes service initialization: Service "kubernetes" is invalid: spec.clusterIP: Invalid value: "10.43.0.1": cannot allocate resources of type serviceipallocations at this time
+E1205 11:18:45.689672    5028 controller.go:152] Unable to remove old endpoints from kubernetes service: StorageError: key not found, Code: 1, Key: /registry/masterleases/172.17.0.2, ResourceVersion: 0, AdditionalErrorMsg: 
+time="2019-12-05T11:18:45.705164873Z" level=info msg="Creating CRD addons.k3s.cattle.io"
+time="2019-12-05T11:18:45.708896154Z" level=info msg="Creating CRD helmcharts.helm.cattle.io"
+time="2019-12-05T11:18:45.717636700Z" level=info msg="Waiting for CRD addons.k3s.cattle.io to become available"
+time="2019-12-05T11:18:46.219625350Z" level=info msg="Done waiting for CRD addons.k3s.cattle.io to become available"
+time="2019-12-05T11:18:46.219660820Z" level=info msg="Waiting for CRD helmcharts.helm.cattle.io to become available"
+E1205 11:18:46.575445    5028 reflector.go:126] k8s.io/client-go/informers/factory.go:130: Failed to list *v1.StatefulSet: statefulsets.apps is forbidden: User "system:kube-scheduler" cannot list resource "statefulsets" in API group "apps" at the cluster scope
+E1205 11:18:46.579450    5028 reflector.go:126] k8s.io/client-go/informers/factory.go:130: Failed to list *v1.PersistentVolume: persistentvolumes is forbidden: User "system:kube-scheduler" cannot list resource "persistentvolumes" in API group "" at the cluster scope
+E1205 11:18:46.582090    5028 reflector.go:126] k8s.io/kubernetes/cmd/kube-scheduler/app/server.go:223: Failed to list *v1.Pod: pods is forbidden: User "system:kube-scheduler" cannot list resource "pods" in API group "" at the cluster scope
+E1205 11:18:46.609649    5028 reflector.go:126] k8s.io/client-go/informers/factory.go:130: Failed to list *v1.Node: nodes is forbidden: User "system:kube-scheduler" cannot list resource "nodes" in API group "" at the cluster scope
+E1205 11:18:46.610451    5028 reflector.go:126] k8s.io/client-go/informers/factory.go:130: Failed to list *v1beta1.PodDisruptionBudget: poddisruptionbudgets.policy is forbidden: User "system:kube-scheduler" cannot list resource "poddisruptionbudgets" in API group "policy" at the cluster scope
+E1205 11:18:46.612781    5028 reflector.go:126] k8s.io/client-go/informers/factory.go:130: Failed to list *v1.ReplicationController: replicationcontrollers is forbidden: User "system:kube-scheduler" cannot list resource "replicationcontrollers" in API group "" at the cluster scope
+E1205 11:18:46.618925    5028 reflector.go:126] k8s.io/client-go/informers/factory.go:130: Failed to list *v1.PersistentVolumeClaim: persistentvolumeclaims is forbidden: User "system:kube-scheduler" cannot list resource "persistentvolumeclaims" in API group "" at the cluster scope
+E1205 11:18:46.633749    5028 reflector.go:126] k8s.io/client-go/informers/factory.go:130: Failed to list *v1.ReplicaSet: replicasets.apps is forbidden: User "system:kube-scheduler" cannot list resource "replicasets" in API group "apps" at the cluster scope
+2019/12/05 11:18:46 [INFO] Waiting for k3s to start
+E1205 11:18:46.644363    5028 reflector.go:126] k8s.io/client-go/informers/factory.go:130: Failed to list *v1.Service: services is forbidden: User "system:kube-scheduler" cannot list resource "services" in API group "" at the cluster scope
+E1205 11:18:46.645791    5028 reflector.go:126] k8s.io/client-go/informers/factory.go:130: Failed to list *v1.StorageClass: storageclasses.storage.k8s.io is forbidden: User "system:kube-scheduler" cannot list resource "storageclasses" in API group "storage.k8s.io" at the cluster scope
+time="2019-12-05T11:18:46.721289877Z" level=info msg="Done waiting for CRD helmcharts.helm.cattle.io to become available"
+time="2019-12-05T11:18:46.729981181Z" level=info msg="Writing static file: /var/lib/rancher/k3s/server/static/charts/traefik-1.64.0.tgz"
+time="2019-12-05T11:18:46.730238439Z" level=info msg="Writing manifest: /var/lib/rancher/k3s/server/manifests/rolebindings.yaml"
+E1205 11:18:46.730379    5028 prometheus.go:138] failed to register depth metric k3s.cattle.io/v1, Kind=Addon: descriptor Desc{fqName: "k3s.cattle.io/v1, Kind=Addon_depth", help: "(Deprecated) Current depth of workqueue: k3s.cattle.io/v1, Kind=Addon", constLabels: {}, variableLabels: []} is invalid: "k3s.cattle.io/v1, Kind=Addon_depth" is not a valid metric name
+E1205 11:18:46.730406    5028 prometheus.go:150] failed to register adds metric k3s.cattle.io/v1, Kind=Addon: descriptor Desc{fqName: "k3s.cattle.io/v1, Kind=Addon_adds", help: "(Deprecated) Total number of adds handled by workqueue: k3s.cattle.io/v1, Kind=Addon", constLabels: {}, variableLabels: []} is invalid: "k3s.cattle.io/v1, Kind=Addon_adds" is not a valid metric name
+E1205 11:18:46.730438    5028 prometheus.go:162] failed to register latency metric k3s.cattle.io/v1, Kind=Addon: descriptor Desc{fqName: "k3s.cattle.io/v1, Kind=Addon_queue_latency", help: "(Deprecated) How long an item stays in workqueuek3s.cattle.io/v1, Kind=Addon before being requested.", constLabels: {}, variableLabels: []} is invalid: "k3s.cattle.io/v1, Kind=Addon_queue_latency" is not a valid metric name
+E1205 11:18:46.730467    5028 prometheus.go:174] failed to register work_duration metric k3s.cattle.io/v1, Kind=Addon: descriptor Desc{fqName: "k3s.cattle.io/v1, Kind=Addon_work_duration", help: "(Deprecated) How long processing an item from workqueuek3s.cattle.io/v1, Kind=Addon takes.", constLabels: {}, variableLabels: []} is invalid: "k3s.cattle.io/v1, Kind=Addon_work_duration" is not a valid metric name
+E1205 11:18:46.730487    5028 prometheus.go:189] failed to register unfinished_work_seconds metric k3s.cattle.io/v1, Kind=Addon: descriptor Desc{fqName: "k3s.cattle.io/v1, Kind=Addon_unfinished_work_seconds", help: "(Deprecated) How many seconds of work k3s.cattle.io/v1, Kind=Addon has done that is in progress and hasn't been observed by work_duration. Large values indicate stuck threads. One can deduce the number of stuck threads by observing the rate at which this increases.", constLabels: {}, variableLabels: []} is invalid: "k3s.cattle.io/v1, Kind=Addon_unfinished_work_seconds" is not a valid metric name
+E1205 11:18:46.730505    5028 prometheus.go:202] failed to register longest_running_processor_microseconds metric k3s.cattle.io/v1, Kind=Addon: descriptor Desc{fqName: "k3s.cattle.io/v1, Kind=Addon_longest_running_processor_microseconds", help: "(Deprecated) How many microseconds has the longest running processor for k3s.cattle.io/v1, Kind=Addon been running.", constLabels: {}, variableLabels: []} is invalid: "k3s.cattle.io/v1, Kind=Addon_longest_running_processor_microseconds" is not a valid metric name
+E1205 11:18:46.730534    5028 prometheus.go:214] failed to register retries metric k3s.cattle.io/v1, Kind=Addon: descriptor Desc{fqName: "k3s.cattle.io/v1, Kind=Addon_retries", help: "(Deprecated) Total number of retries handled by workqueue: k3s.cattle.io/v1, Kind=Addon", constLabels: {}, variableLabels: []} is invalid: "k3s.cattle.io/v1, Kind=Addon_retries" is not a valid metric name
+time="2019-12-05T11:18:46.734281140Z" level=error msg="Update cert unable to convert string to cert: Unable to split cert into two parts"
+time="2019-12-05T11:18:46.734328879Z" level=info msg="Listening on :6443"
+E1205 11:18:46.739418    5028 prometheus.go:138] failed to register depth metric k3s.cattle.io/v1, Kind=ListenerConfig: descriptor Desc{fqName: "k3s.cattle.io/v1, Kind=ListenerConfig_depth", help: "(Deprecated) Current depth of workqueue: k3s.cattle.io/v1, Kind=ListenerConfig", constLabels: {}, variableLabels: []} is invalid: "k3s.cattle.io/v1, Kind=ListenerConfig_depth" is not a valid metric name
+E1205 11:18:46.740546    5028 prometheus.go:150] failed to register adds metric k3s.cattle.io/v1, Kind=ListenerConfig: descriptor Desc{fqName: "k3s.cattle.io/v1, Kind=ListenerConfig_adds", help: "(Deprecated) Total number of adds handled by workqueue: k3s.cattle.io/v1, Kind=ListenerConfig", constLabels: {}, variableLabels: []} is invalid: "k3s.cattle.io/v1, Kind=ListenerConfig_adds" is not a valid metric name
+E1205 11:18:46.740620    5028 prometheus.go:162] failed to register latency metric k3s.cattle.io/v1, Kind=ListenerConfig: descriptor Desc{fqName: "k3s.cattle.io/v1, Kind=ListenerConfig_queue_latency", help: "(Deprecated) How long an item stays in workqueuek3s.cattle.io/v1, Kind=ListenerConfig before being requested.", constLabels: {}, variableLabels: []} is invalid: "k3s.cattle.io/v1, Kind=ListenerConfig_queue_latency" is not a valid metric name
+E1205 11:18:46.740666    5028 prometheus.go:174] failed to register work_duration metric k3s.cattle.io/v1, Kind=ListenerConfig: descriptor Desc{fqName: "k3s.cattle.io/v1, Kind=ListenerConfig_work_duration", help: "(Deprecated) How long processing an item from workqueuek3s.cattle.io/v1, Kind=ListenerConfig takes.", constLabels: {}, variableLabels: []} is invalid: "k3s.cattle.io/v1, Kind=ListenerConfig_work_duration" is not a valid metric name
+E1205 11:18:46.740695    5028 prometheus.go:189] failed to register unfinished_work_seconds metric k3s.cattle.io/v1, Kind=ListenerConfig: descriptor Desc{fqName: "k3s.cattle.io/v1, Kind=ListenerConfig_unfinished_work_seconds", help: "(Deprecated) How many seconds of work k3s.cattle.io/v1, Kind=ListenerConfig has done that is in progress and hasn't been observed by work_duration. Large values indicate stuck threads. One can deduce the number of stuck threads by observing the rate at which this increases.", constLabels: {}, variableLabels: []} is invalid: "k3s.cattle.io/v1, Kind=ListenerConfig_unfinished_work_seconds" is not a valid metric name
+E1205 11:18:46.740721    5028 prometheus.go:202] failed to register longest_running_processor_microseconds metric k3s.cattle.io/v1, Kind=ListenerConfig: descriptor Desc{fqName: "k3s.cattle.io/v1, Kind=ListenerConfig_longest_running_processor_microseconds", help: "(Deprecated) How many microseconds has the longest running processor for k3s.cattle.io/v1, Kind=ListenerConfig been running.", constLabels: {}, variableLabels: []} is invalid: "k3s.cattle.io/v1, Kind=ListenerConfig_longest_running_processor_microseconds" is not a valid metric name
+E1205 11:18:46.740757    5028 prometheus.go:214] failed to register retries metric k3s.cattle.io/v1, Kind=ListenerConfig: descriptor Desc{fqName: "k3s.cattle.io/v1, Kind=ListenerConfig_retries", help: "(Deprecated) Total number of retries handled by workqueue: k3s.cattle.io/v1, Kind=ListenerConfig", constLabels: {}, variableLabels: []} is invalid: "k3s.cattle.io/v1, Kind=ListenerConfig_retries" is not a valid metric name
+time="2019-12-05T11:18:47.241777772Z" level=info msg="Starting k3s.cattle.io/v1, Kind=Addon controller"
+time="2019-12-05T11:18:47.341987879Z" level=info msg="Starting k3s.cattle.io/v1, Kind=ListenerConfig controller"
+time="2019-12-05T11:18:47.342079071Z" level=error msg="Update cert unable to convert string to cert: Unable to split cert into two parts"
+time="2019-12-05T11:18:47.342310862Z" level=info msg="Node token is available at /var/lib/rancher/k3s/server/node-token"
+time="2019-12-05T11:18:47.342327083Z" level=info msg="To join node to cluster: k3s agent -s https://172.17.0.2:6443 -t ${NODE_TOKEN}"
+E1205 11:18:47.350478    5028 prometheus.go:138] failed to register depth metric /v1, Kind=Node: descriptor Desc{fqName: "/v1, Kind=Node_depth", help: "(Deprecated) Current depth of workqueue: /v1, Kind=Node", constLabels: {}, variableLabels: []} is invalid: "/v1, Kind=Node_depth" is not a valid metric name
+E1205 11:18:47.352238    5028 prometheus.go:150] failed to register adds metric /v1, Kind=Node: descriptor Desc{fqName: "/v1, Kind=Node_adds", help: "(Deprecated) Total number of adds handled by workqueue: /v1, Kind=Node", constLabels: {}, variableLabels: []} is invalid: "/v1, Kind=Node_adds" is not a valid metric name
+E1205 11:18:47.353110    5028 prometheus.go:162] failed to register latency metric /v1, Kind=Node: descriptor Desc{fqName: "/v1, Kind=Node_queue_latency", help: "(Deprecated) How long an item stays in workqueue/v1, Kind=Node before being requested.", constLabels: {}, variableLabels: []} is invalid: "/v1, Kind=Node_queue_latency" is not a valid metric name
+E1205 11:18:47.353879    5028 prometheus.go:174] failed to register work_duration metric /v1, Kind=Node: descriptor Desc{fqName: "/v1, Kind=Node_work_duration", help: "(Deprecated) How long processing an item from workqueue/v1, Kind=Node takes.", constLabels: {}, variableLabels: []} is invalid: "/v1, Kind=Node_work_duration" is not a valid metric name
+E1205 11:18:47.353923    5028 prometheus.go:189] failed to register unfinished_work_seconds metric /v1, Kind=Node: descriptor Desc{fqName: "/v1, Kind=Node_unfinished_work_seconds", help: "(Deprecated) How many seconds of work /v1, Kind=Node has done that is in progress and hasn't been observed by work_duration. Large values indicate stuck threads. One can deduce the number of stuck threads by observing the rate at which this increases.", constLabels: {}, variableLabels: []} is invalid: "/v1, Kind=Node_unfinished_work_seconds" is not a valid metric name
+E1205 11:18:47.353952    5028 prometheus.go:202] failed to register longest_running_processor_microseconds metric /v1, Kind=Node: descriptor Desc{fqName: "/v1, Kind=Node_longest_running_processor_microseconds", help: "(Deprecated) How many microseconds has the longest running processor for /v1, Kind=Node been running.", constLabels: {}, variableLabels: []} is invalid: "/v1, Kind=Node_longest_running_processor_microseconds" is not a valid metric name
+E1205 11:18:47.353997    5028 prometheus.go:214] failed to register retries metric /v1, Kind=Node: descriptor Desc{fqName: "/v1, Kind=Node_retries", help: "(Deprecated) Total number of retries handled by workqueue: /v1, Kind=Node", constLabels: {}, variableLabels: []} is invalid: "/v1, Kind=Node_retries" is not a valid metric name
+E1205 11:18:47.354443    5028 prometheus.go:138] failed to register depth metric batch/v1, Kind=Job: descriptor Desc{fqName: "batch/v1, Kind=Job_depth", help: "(Deprecated) Current depth of workqueue: batch/v1, Kind=Job", constLabels: {}, variableLabels: []} is invalid: "batch/v1, Kind=Job_depth" is not a valid metric name
+E1205 11:18:47.354720    5028 prometheus.go:150] failed to register adds metric batch/v1, Kind=Job: descriptor Desc{fqName: "batch/v1, Kind=Job_adds", help: "(Deprecated) Total number of adds handled by workqueue: batch/v1, Kind=Job", constLabels: {}, variableLabels: []} is invalid: "batch/v1, Kind=Job_adds" is not a valid metric name
+E1205 11:18:47.355106    5028 prometheus.go:162] failed to register latency metric batch/v1, Kind=Job: descriptor Desc{fqName: "batch/v1, Kind=Job_queue_latency", help: "(Deprecated) How long an item stays in workqueuebatch/v1, Kind=Job before being requested.", constLabels: {}, variableLabels: []} is invalid: "batch/v1, Kind=Job_queue_latency" is not a valid metric name
+E1205 11:18:47.355779    5028 prometheus.go:174] failed to register work_duration metric batch/v1, Kind=Job: descriptor Desc{fqName: "batch/v1, Kind=Job_work_duration", help: "(Deprecated) How long processing an item from workqueuebatch/v1, Kind=Job takes.", constLabels: {}, variableLabels: []} is invalid: "batch/v1, Kind=Job_work_duration" is not a valid metric name
+E1205 11:18:47.355814    5028 prometheus.go:189] failed to register unfinished_work_seconds metric batch/v1, Kind=Job: descriptor Desc{fqName: "batch/v1, Kind=Job_unfinished_work_seconds", help: "(Deprecated) How many seconds of work batch/v1, Kind=Job has done that is in progress and hasn't been observed by work_duration. Large values indicate stuck threads. One can deduce the number of stuck threads by observing the rate at which this increases.", constLabels: {}, variableLabels: []} is invalid: "batch/v1, Kind=Job_unfinished_work_seconds" is not a valid metric name
+E1205 11:18:47.355920    5028 prometheus.go:202] failed to register longest_running_processor_microseconds metric batch/v1, Kind=Job: descriptor Desc{fqName: "batch/v1, Kind=Job_longest_running_processor_microseconds", help: "(Deprecated) How many microseconds has the longest running processor for batch/v1, Kind=Job been running.", constLabels: {}, variableLabels: []} is invalid: "batch/v1, Kind=Job_longest_running_processor_microseconds" is not a valid metric name
+E1205 11:18:47.355981    5028 prometheus.go:214] failed to register retries metric batch/v1, Kind=Job: descriptor Desc{fqName: "batch/v1, Kind=Job_retries", help: "(Deprecated) Total number of retries handled by workqueue: batch/v1, Kind=Job", constLabels: {}, variableLabels: []} is invalid: "batch/v1, Kind=Job_retries" is not a valid metric name
+E1205 11:18:47.356280    5028 prometheus.go:138] failed to register depth metric helm.cattle.io/v1, Kind=HelmChart: descriptor Desc{fqName: "helm.cattle.io/v1, Kind=HelmChart_depth", help: "(Deprecated) Current depth of workqueue: helm.cattle.io/v1, Kind=HelmChart", constLabels: {}, variableLabels: []} is invalid: "helm.cattle.io/v1, Kind=HelmChart_depth" is not a valid metric name
+E1205 11:18:47.356312    5028 prometheus.go:150] failed to register adds metric helm.cattle.io/v1, Kind=HelmChart: descriptor Desc{fqName: "helm.cattle.io/v1, Kind=HelmChart_adds", help: "(Deprecated) Total number of adds handled by workqueue: helm.cattle.io/v1, Kind=HelmChart", constLabels: {}, variableLabels: []} is invalid: "helm.cattle.io/v1, Kind=HelmChart_adds" is not a valid metric name
+E1205 11:18:47.357132    5028 prometheus.go:162] failed to register latency metric helm.cattle.io/v1, Kind=HelmChart: descriptor Desc{fqName: "helm.cattle.io/v1, Kind=HelmChart_queue_latency", help: "(Deprecated) How long an item stays in workqueuehelm.cattle.io/v1, Kind=HelmChart before being requested.", constLabels: {}, variableLabels: []} is invalid: "helm.cattle.io/v1, Kind=HelmChart_queue_latency" is not a valid metric name
+E1205 11:18:47.358127    5028 prometheus.go:174] failed to register work_duration metric helm.cattle.io/v1, Kind=HelmChart: descriptor Desc{fqName: "helm.cattle.io/v1, Kind=HelmChart_work_duration", help: "(Deprecated) How long processing an item from workqueuehelm.cattle.io/v1, Kind=HelmChart takes.", constLabels: {}, variableLabels: []} is invalid: "helm.cattle.io/v1, Kind=HelmChart_work_duration" is not a valid metric name
+E1205 11:18:47.358183    5028 prometheus.go:189] failed to register unfinished_work_seconds metric helm.cattle.io/v1, Kind=HelmChart: descriptor Desc{fqName: "helm.cattle.io/v1, Kind=HelmChart_unfinished_work_seconds", help: "(Deprecated) How many seconds of work helm.cattle.io/v1, Kind=HelmChart has done that is in progress and hasn't been observed by work_duration. Large values indicate stuck threads. One can deduce the number of stuck threads by observing the rate at which this increases.", constLabels: {}, variableLabels: []} is invalid: "helm.cattle.io/v1, Kind=HelmChart_unfinished_work_seconds" is not a valid metric name
+E1205 11:18:47.358225    5028 prometheus.go:202] failed to register longest_running_processor_microseconds metric helm.cattle.io/v1, Kind=HelmChart: descriptor Desc{fqName: "helm.cattle.io/v1, Kind=HelmChart_longest_running_processor_microseconds", help: "(Deprecated) How many microseconds has the longest running processor for helm.cattle.io/v1, Kind=HelmChart been running.", constLabels: {}, variableLabels: []} is invalid: "helm.cattle.io/v1, Kind=HelmChart_longest_running_processor_microseconds" is not a valid metric name
+E1205 11:18:47.358856    5028 prometheus.go:214] failed to register retries metric helm.cattle.io/v1, Kind=HelmChart: descriptor Desc{fqName: "helm.cattle.io/v1, Kind=HelmChart_retries", help: "(Deprecated) Total number of retries handled by workqueue: helm.cattle.io/v1, Kind=HelmChart", constLabels: {}, variableLabels: []} is invalid: "helm.cattle.io/v1, Kind=HelmChart_retries" is not a valid metric name
+E1205 11:18:47.359284    5028 prometheus.go:138] failed to register depth metric /v1, Kind=Service: descriptor Desc{fqName: "/v1, Kind=Service_depth", help: "(Deprecated) Current depth of workqueue: /v1, Kind=Service", constLabels: {}, variableLabels: []} is invalid: "/v1, Kind=Service_depth" is not a valid metric name
+E1205 11:18:47.359314    5028 prometheus.go:150] failed to register adds metric /v1, Kind=Service: descriptor Desc{fqName: "/v1, Kind=Service_adds", help: "(Deprecated) Total number of adds handled by workqueue: /v1, Kind=Service", constLabels: {}, variableLabels: []} is invalid: "/v1, Kind=Service_adds" is not a valid metric name
+E1205 11:18:47.359723    5028 prometheus.go:162] failed to register latency metric /v1, Kind=Service: descriptor Desc{fqName: "/v1, Kind=Service_queue_latency", help: "(Deprecated) How long an item stays in workqueue/v1, Kind=Service before being requested.", constLabels: {}, variableLabels: []} is invalid: "/v1, Kind=Service_queue_latency" is not a valid metric name
+E1205 11:18:47.360136    5028 prometheus.go:174] failed to register work_duration metric /v1, Kind=Service: descriptor Desc{fqName: "/v1, Kind=Service_work_duration", help: "(Deprecated) How long processing an item from workqueue/v1, Kind=Service takes.", constLabels: {}, variableLabels: []} is invalid: "/v1, Kind=Service_work_duration" is not a valid metric name
+E1205 11:18:47.360163    5028 prometheus.go:189] failed to register unfinished_work_seconds metric /v1, Kind=Service: descriptor Desc{fqName: "/v1, Kind=Service_unfinished_work_seconds", help: "(Deprecated) How many seconds of work /v1, Kind=Service has done that is in progress and hasn't been observed by work_duration. Large values indicate stuck threads. One can deduce the number of stuck threads by observing the rate at which this increases.", constLabels: {}, variableLabels: []} is invalid: "/v1, Kind=Service_unfinished_work_seconds" is not a valid metric name
+E1205 11:18:47.360188    5028 prometheus.go:202] failed to register longest_running_processor_microseconds metric /v1, Kind=Service: descriptor Desc{fqName: "/v1, Kind=Service_longest_running_processor_microseconds", help: "(Deprecated) How many microseconds has the longest running processor for /v1, Kind=Service been running.", constLabels: {}, variableLabels: []} is invalid: "/v1, Kind=Service_longest_running_processor_microseconds" is not a valid metric name
+E1205 11:18:47.360228    5028 prometheus.go:214] failed to register retries metric /v1, Kind=Service: descriptor Desc{fqName: "/v1, Kind=Service_retries", help: "(Deprecated) Total number of retries handled by workqueue: /v1, Kind=Service", constLabels: {}, variableLabels: []} is invalid: "/v1, Kind=Service_retries" is not a valid metric name
+E1205 11:18:47.361352    5028 prometheus.go:138] failed to register depth metric /v1, Kind=Pod: descriptor Desc{fqName: "/v1, Kind=Pod_depth", help: "(Deprecated) Current depth of workqueue: /v1, Kind=Pod", constLabels: {}, variableLabels: []} is invalid: "/v1, Kind=Pod_depth" is not a valid metric name
+E1205 11:18:47.361385    5028 prometheus.go:150] failed to register adds metric /v1, Kind=Pod: descriptor Desc{fqName: "/v1, Kind=Pod_adds", help: "(Deprecated) Total number of adds handled by workqueue: /v1, Kind=Pod", constLabels: {}, variableLabels: []} is invalid: "/v1, Kind=Pod_adds" is not a valid metric name
+E1205 11:18:47.361844    5028 prometheus.go:162] failed to register latency metric /v1, Kind=Pod: descriptor Desc{fqName: "/v1, Kind=Pod_queue_latency", help: "(Deprecated) How long an item stays in workqueue/v1, Kind=Pod before being requested.", constLabels: {}, variableLabels: []} is invalid: "/v1, Kind=Pod_queue_latency" is not a valid metric name
+E1205 11:18:47.362366    5028 prometheus.go:174] failed to register work_duration metric /v1, Kind=Pod: descriptor Desc{fqName: "/v1, Kind=Pod_work_duration", help: "(Deprecated) How long processing an item from workqueue/v1, Kind=Pod takes.", constLabels: {}, variableLabels: []} is invalid: "/v1, Kind=Pod_work_duration" is not a valid metric name
+E1205 11:18:47.362394    5028 prometheus.go:189] failed to register unfinished_work_seconds metric /v1, Kind=Pod: descriptor Desc{fqName: "/v1, Kind=Pod_unfinished_work_seconds", help: "(Deprecated) How many seconds of work /v1, Kind=Pod has done that is in progress and hasn't been observed by work_duration. Large values indicate stuck threads. One can deduce the number of stuck threads by observing the rate at which this increases.", constLabels: {}, variableLabels: []} is invalid: "/v1, Kind=Pod_unfinished_work_seconds" is not a valid metric name
+E1205 11:18:47.362427    5028 prometheus.go:202] failed to register longest_running_processor_microseconds metric /v1, Kind=Pod: descriptor Desc{fqName: "/v1, Kind=Pod_longest_running_processor_microseconds", help: "(Deprecated) How many microseconds has the longest running processor for /v1, Kind=Pod been running.", constLabels: {}, variableLabels: []} is invalid: "/v1, Kind=Pod_longest_running_processor_microseconds" is not a valid metric name
+E1205 11:18:47.362467    5028 prometheus.go:214] failed to register retries metric /v1, Kind=Pod: descriptor Desc{fqName: "/v1, Kind=Pod_retries", help: "(Deprecated) Total number of retries handled by workqueue: /v1, Kind=Pod", constLabels: {}, variableLabels: []} is invalid: "/v1, Kind=Pod_retries" is not a valid metric name
+E1205 11:18:47.362822    5028 prometheus.go:138] failed to register depth metric /v1, Kind=Endpoints: descriptor Desc{fqName: "/v1, Kind=Endpoints_depth", help: "(Deprecated) Current depth of workqueue: /v1, Kind=Endpoints", constLabels: {}, variableLabels: []} is invalid: "/v1, Kind=Endpoints_depth" is not a valid metric name
+E1205 11:18:47.362849    5028 prometheus.go:150] failed to register adds metric /v1, Kind=Endpoints: descriptor Desc{fqName: "/v1, Kind=Endpoints_adds", help: "(Deprecated) Total number of adds handled by workqueue: /v1, Kind=Endpoints", constLabels: {}, variableLabels: []} is invalid: "/v1, Kind=Endpoints_adds" is not a valid metric name
+E1205 11:18:47.364213    5028 prometheus.go:162] failed to register latency metric /v1, Kind=Endpoints: descriptor Desc{fqName: "/v1, Kind=Endpoints_queue_latency", help: "(Deprecated) How long an item stays in workqueue/v1, Kind=Endpoints before being requested.", constLabels: {}, variableLabels: []} is invalid: "/v1, Kind=Endpoints_queue_latency" is not a valid metric name
+E1205 11:18:47.364477    5028 prometheus.go:174] failed to register work_duration metric /v1, Kind=Endpoints: descriptor Desc{fqName: "/v1, Kind=Endpoints_work_duration", help: "(Deprecated) How long processing an item from workqueue/v1, Kind=Endpoints takes.", constLabels: {}, variableLabels: []} is invalid: "/v1, Kind=Endpoints_work_duration" is not a valid metric name
+E1205 11:18:47.364506    5028 prometheus.go:189] failed to register unfinished_work_seconds metric /v1, Kind=Endpoints: descriptor Desc{fqName: "/v1, Kind=Endpoints_unfinished_work_seconds", help: "(Deprecated) How many seconds of work /v1, Kind=Endpoints has done that is in progress and hasn't been observed by work_duration. Large values indicate stuck threads. One can deduce the number of stuck threads by observing the rate at which this increases.", constLabels: {}, variableLabels: []} is invalid: "/v1, Kind=Endpoints_unfinished_work_seconds" is not a valid metric name
+E1205 11:18:47.364535    5028 prometheus.go:202] failed to register longest_running_processor_microseconds metric /v1, Kind=Endpoints: descriptor Desc{fqName: "/v1, Kind=Endpoints_longest_running_processor_microseconds", help: "(Deprecated) How many microseconds has the longest running processor for /v1, Kind=Endpoints been running.", constLabels: {}, variableLabels: []} is invalid: "/v1, Kind=Endpoints_longest_running_processor_microseconds" is not a valid metric name
+E1205 11:18:47.364678    5028 prometheus.go:214] failed to register retries metric /v1, Kind=Endpoints: descriptor Desc{fqName: "/v1, Kind=Endpoints_retries", help: "(Deprecated) Total number of retries handled by workqueue: /v1, Kind=Endpoints", constLabels: {}, variableLabels: []} is invalid: "/v1, Kind=Endpoints_retries" is not a valid metric name
+time="2019-12-05T11:18:47.457328216Z" level=info msg="Wrote kubeconfig /etc/rancher/k3s/k3s.yaml"
+time="2019-12-05T11:18:47.457349657Z" level=info msg="Run: k3s kubectl"
+time="2019-12-05T11:18:47.457357465Z" level=info msg="k3s is up and running"
+2019/12/05 11:18:47 [INFO] Running in single server mode, will not peer connections
+2019/12/05 11:18:47 [INFO] Creating CRD apps.project.cattle.io
+2019/12/05 11:18:47 [INFO] Creating CRD authconfigs.management.cattle.io
+2019/12/05 11:18:47 [INFO] Creating CRD apprevisions.project.cattle.io
+2019/12/05 11:18:47 [INFO] Creating CRD catalogs.management.cattle.io
+2019/12/05 11:18:47 [INFO] Creating CRD catalogtemplates.management.cattle.io
+2019/12/05 11:18:47 [INFO] Creating CRD pipelineexecutions.project.cattle.io
+2019/12/05 11:18:47 [INFO] Creating CRD catalogtemplateversions.management.cattle.io
+2019/12/05 11:18:47 [INFO] Creating CRD pipelinesettings.project.cattle.io
+2019/12/05 11:18:47 [INFO] Creating CRD clusteralerts.management.cattle.io
+2019/12/05 11:18:47 [INFO] Creating CRD pipelines.project.cattle.io
+2019/12/05 11:18:47 [INFO] Creating CRD clusteralertgroups.management.cattle.io
+2019/12/05 11:18:48 [INFO] Creating CRD sourcecodecredentials.project.cattle.io
+2019/12/05 11:18:48 [INFO] Creating CRD clustercatalogs.management.cattle.io
+time="2019-12-05T11:18:48.369127280Z" level=info msg="Starting helm.cattle.io/v1, Kind=HelmChart controller"
+2019/12/05 11:18:48 [INFO] Creating CRD sourcecodeproviderconfigs.project.cattle.io
+2019/12/05 11:18:48 [INFO] Creating CRD clusterloggings.management.cattle.io
+2019/12/05 11:18:48 [INFO] Creating CRD sourcecoderepositories.project.cattle.io
+time="2019-12-05T11:18:48.869929093Z" level=info msg="Starting batch/v1, Kind=Job controller"
+W1205 11:18:48.908297    5028 lease.go:222] Resetting endpoints for master service "kubernetes" to [172.17.0.2]
+2019/12/05 11:18:49 [INFO] Creating CRD clusteralertrules.management.cattle.io
+2019/12/05 11:18:49 [INFO] Creating CRD clustermonitorgraphs.management.cattle.io
+time="2019-12-05T11:18:49.571291689Z" level=info msg="Starting /v1, Kind=Node controller"
+time="2019-12-05T11:18:49.671452872Z" level=info msg="Starting /v1, Kind=Service controller"
+time="2019-12-05T11:18:49.774992452Z" level=info msg="Starting /v1, Kind=Pod controller"
+2019/12/05 11:18:49 http: TLS handshake error from 127.0.0.1:48496: EOF
+2019/12/05 11:18:49 http: TLS handshake error from 127.0.0.1:48498: EOF
+2019/12/05 11:18:49 [INFO] Creating CRD clusterregistrationtokens.management.cattle.io
+time="2019-12-05T11:18:49.875006930Z" level=info msg="Starting /v1, Kind=Endpoints controller"
+2019/12/05 11:18:50 [INFO] Creating CRD clusterroletemplatebindings.management.cattle.io
+2019/12/05 11:18:50 http: TLS handshake error from 127.0.0.1:48558: EOF
+2019/12/05 11:18:50 [INFO] Creating CRD clusterscans.management.cattle.io
+2019/12/05 11:18:50 [INFO] Creating CRD clusters.management.cattle.io
+E1205 11:18:50.469122    5028 resource_quota_controller.go:171] initial monitor sync has error: [couldn't start monitor for resource "project.cattle.io/v3, Resource=apprevisions": unable to monitor quota for resource "project.cattle.io/v3, Resource=apprevisions", couldn't start monitor for resource "management.cattle.io/v3, Resource=clustercatalogs": unable to monitor quota for resource "management.cattle.io/v3, Resource=clustercatalogs", couldn't start monitor for resource "extensions/v1beta1, Resource=networkpolicies": unable to monitor quota for resource "extensions/v1beta1, Resource=networkpolicies", couldn't start monitor for resource "management.cattle.io/v3, Resource=clusterregistrationtokens": unable to monitor quota for resource "management.cattle.io/v3, Resource=clusterregistrationtokens", couldn't start monitor for resource "project.cattle.io/v3, Resource=sourcecodecredentials": unable to monitor quota for resource "project.cattle.io/v3, Resource=sourcecodecredentials", couldn't start monitor for resource "project.cattle.io/v3, Resource=pipelineexecutions": unable to monitor quota for resource "project.cattle.io/v3, Resource=pipelineexecutions", couldn't start monitor for resource "management.cattle.io/v3, Resource=clusteralertrules": unable to monitor quota for resource "management.cattle.io/v3, Resource=clusteralertrules", couldn't start monitor for resource "project.cattle.io/v3, Resource=sourcecodeproviderconfigs": unable to monitor quota for resource "project.cattle.io/v3, Resource=sourcecodeproviderconfigs", couldn't start monitor for resource "project.cattle.io/v3, Resource=pipelines": unable to monitor quota for resource "project.cattle.io/v3, Resource=pipelines", couldn't start monitor for resource "management.cattle.io/v3, Resource=catalogtemplates": unable to monitor quota for resource "management.cattle.io/v3, Resource=catalogtemplates", couldn't start monitor for resource "helm.cattle.io/v1, Resource=helmcharts": unable to monitor quota for resource "helm.cattle.io/v1, Resource=helmcharts", couldn't start monitor for resource "project.cattle.io/v3, Resource=apps": unable to monitor quota for resource "project.cattle.io/v3, Resource=apps", couldn't start monitor for resource "management.cattle.io/v3, Resource=clusteralertgroups": unable to monitor quota for resource "management.cattle.io/v3, Resource=clusteralertgroups", couldn't start monitor for resource "management.cattle.io/v3, Resource=clusterroletemplatebindings": unable to monitor quota for resource "management.cattle.io/v3, Resource=clusterroletemplatebindings", couldn't start monitor for resource "k3s.cattle.io/v1, Resource=listenerconfigs": unable to monitor quota for resource "k3s.cattle.io/v1, Resource=listenerconfigs", couldn't start monitor for resource "project.cattle.io/v3, Resource=sourcecoderepositories": unable to monitor quota for resource "project.cattle.io/v3, Resource=sourcecoderepositories", couldn't start monitor for resource "management.cattle.io/v3, Resource=clustermonitorgraphs": unable to monitor quota for resource "management.cattle.io/v3, Resource=clustermonitorgraphs", couldn't start monitor for resource "management.cattle.io/v3, Resource=catalogtemplateversions": unable to monitor quota for resource "management.cattle.io/v3, Resource=catalogtemplateversions", couldn't start monitor for resource "project.cattle.io/v3, Resource=pipelinesettings": unable to monitor quota for resource "project.cattle.io/v3, Resource=pipelinesettings", couldn't start monitor for resource "k3s.cattle.io/v1, Resource=addons": unable to monitor quota for resource "k3s.cattle.io/v1, Resource=addons", couldn't start monitor for resource "management.cattle.io/v3, Resource=clusteralerts": unable to monitor quota for resource "management.cattle.io/v3, Resource=clusteralerts", couldn't start monitor for resource "management.cattle.io/v3, Resource=clusterloggings": unable to monitor quota for resource "management.cattle.io/v3, Resource=clusterloggings", couldn't start monitor for resource "management.cattle.io/v3, Resource=clusterscans": unable to monitor quota for resource "management.cattle.io/v3, Resource=clusterscans"]
+2019/12/05 11:18:50 [INFO] Creating CRD composeconfigs.management.cattle.io
+2019/12/05 11:18:50 [INFO] Creating CRD dynamicschemas.management.cattle.io
+2019/12/05 11:18:51 [INFO] Creating CRD etcdbackups.management.cattle.io
+2019/12/05 11:18:51 [INFO] Creating CRD features.management.cattle.io
+2019/12/05 11:18:51 [INFO] Creating CRD globalrolebindings.management.cattle.io
+2019/12/05 11:18:51 [INFO] Creating CRD globalroles.management.cattle.io
+2019/12/05 11:18:51 [INFO] Creating CRD groupmembers.management.cattle.io
+2019/12/05 11:18:52 [INFO] Creating CRD groups.management.cattle.io
+2019/12/05 11:18:52 [INFO] Creating CRD kontainerdrivers.management.cattle.io
+2019/12/05 11:18:52 [INFO] Creating CRD listenconfigs.management.cattle.io
+2019/12/05 11:18:52 [INFO] Creating CRD multiclusterapps.management.cattle.io
+2019/12/05 11:18:52 [INFO] Creating CRD multiclusterapprevisions.management.cattle.io
+2019/12/05 11:18:53 [INFO] Creating CRD monitormetrics.management.cattle.io
+2019/12/05 11:18:53 [INFO] Creating CRD nodedrivers.management.cattle.io
+2019/12/05 11:18:53 [INFO] Creating CRD nodepools.management.cattle.io
+2019/12/05 11:18:53 [INFO] Creating CRD nodetemplates.management.cattle.io
+2019/12/05 11:18:53 http: TLS handshake error from 127.0.0.1:48642: EOF
+2019/12/05 11:18:53 http: TLS handshake error from 127.0.0.1:48644: EOF
+2019/12/05 11:18:53 http: TLS handshake error from 127.0.0.1:48646: EOF
+2019/12/05 11:18:53 http: TLS handshake error from 127.0.0.1:48648: EOF
+2019/12/05 11:18:53 http: TLS handshake error from 127.0.0.1:48640: EOF
+2019/12/05 11:18:53 http: TLS handshake error from 127.0.0.1:48650: EOF
+2019/12/05 11:18:53 [INFO] Creating CRD nodes.management.cattle.io
+2019/12/05 11:18:54 [INFO] Creating CRD notifiers.management.cattle.io
+2019/12/05 11:18:54 [INFO] Creating CRD podsecuritypolicytemplateprojectbindings.management.cattle.io
+2019/12/05 11:18:54 [INFO] Creating CRD podsecuritypolicytemplates.management.cattle.io
+2019/12/05 11:18:54 [INFO] Creating CRD preferences.management.cattle.io
+W1205 11:18:54.848360    5028 controllermanager.go:445] Skipping "root-ca-cert-publisher"
+2019/12/05 11:18:54 [INFO] Creating CRD projectalerts.management.cattle.io
+E1205 11:18:54.871193    5028 prometheus.go:138] failed to register depth metric certificate: duplicate metrics collector registration attempted
+E1205 11:18:54.871220    5028 prometheus.go:150] failed to register adds metric certificate: duplicate metrics collector registration attempted
+E1205 11:18:54.871257    5028 prometheus.go:162] failed to register latency metric certificate: duplicate metrics collector registration attempted
+E1205 11:18:54.871300    5028 prometheus.go:174] failed to register work_duration metric certificate: duplicate metrics collector registration attempted
+E1205 11:18:54.871328    5028 prometheus.go:189] failed to register unfinished_work_seconds metric certificate: duplicate metrics collector registration attempted
+E1205 11:18:54.871352    5028 prometheus.go:202] failed to register longest_running_processor_microseconds metric certificate: duplicate metrics collector registration attempted
+E1205 11:18:54.871390    5028 prometheus.go:214] failed to register retries metric certificate: duplicate metrics collector registration attempted
+2019/12/05 11:18:55 [INFO] Creating CRD projectalertgroups.management.cattle.io
+2019/12/05 11:18:55 [INFO] Creating CRD projectcatalogs.management.cattle.io
+2019/12/05 11:18:55 [INFO] Creating CRD projectloggings.management.cattle.io
+2019/12/05 11:18:55 [INFO] Creating CRD projectalertrules.management.cattle.io
+2019/12/05 11:18:55 [INFO] Creating CRD projectmonitorgraphs.management.cattle.io
+2019/12/05 11:18:56 [INFO] Creating CRD projectnetworkpolicies.management.cattle.io
+2019/12/05 11:18:56 [INFO] Creating CRD projectroletemplatebindings.management.cattle.io
+2019/12/05 11:18:56 [INFO] Creating CRD projects.management.cattle.io
+2019/12/05 11:18:56 [INFO] Creating CRD rkek8ssystemimages.management.cattle.io
+2019/12/05 11:18:56 [INFO] Creating CRD rkek8sserviceoptions.management.cattle.io
+2019/12/05 11:18:57 [INFO] Creating CRD rkeaddons.management.cattle.io
+2019/12/05 11:18:57 [INFO] Creating CRD roletemplates.management.cattle.io
+2019/12/05 11:18:57 [INFO] Creating CRD settings.management.cattle.io
+2019/12/05 11:18:57 [INFO] Creating CRD templates.management.cattle.io
+2019/12/05 11:18:57 [INFO] Creating CRD templateversions.management.cattle.io
+2019/12/05 11:18:58 [INFO] Creating CRD templatecontents.management.cattle.io
+2019/12/05 11:18:58 [INFO] Creating CRD tokens.management.cattle.io
+2019/12/05 11:18:58 [INFO] Creating CRD userattributes.management.cattle.io
+2019/12/05 11:18:58 [INFO] Creating CRD users.management.cattle.io
+2019/12/05 11:18:58 [INFO] Creating CRD globaldnses.management.cattle.io
+2019/12/05 11:18:59 [INFO] Creating CRD globaldnsproviders.management.cattle.io
+2019/12/05 11:18:59 [INFO] Creating CRD clustertemplates.management.cattle.io
+2019/12/05 11:18:59 [INFO] Creating CRD clustertemplaterevisions.management.cattle.io
+2019/12/05 11:19:00 [INFO] Starting API controllers
+2019/12/05 11:19:00 [INFO] Starting catalog controller
+2019/12/05 11:19:00 [INFO] Starting project-level catalog controller
+2019/12/05 11:19:00 [INFO] Starting cluster-level catalog controller
+2019/12/05 11:19:00 [INFO] Starting management controllers
+2019/12/05 11:19:01 [INFO] Reconciling GlobalRoles
+2019/12/05 11:19:01 [INFO] Listening on :8443
+2019/12/05 11:19:01 [INFO] Listening on :8080
+2019/12/05 11:19:01 [INFO] Creating user
+2019/12/05 11:19:01 [INFO] Creating nodedrivers-manage
+2019/12/05 11:19:01 [INFO] Creating catalogs-use
+2019/12/05 11:19:01 [INFO] [mgmt-auth-gr-controller] Creating clusterRole cattle-globalrole-nodedrivers-manage for corresponding GlobalRole
+2019/12/05 11:19:01 [INFO] [mgmt-auth-gr-controller] Creating clusterRole cattle-globalrole-user for corresponding GlobalRole
+2019/12/05 11:19:01 [INFO] Creating features-manage
+2019/12/05 11:19:01 [INFO] Creating clusters-create
+2019/12/05 11:19:01 [INFO] Creating catalogs-manage
+2019/12/05 11:19:01 [INFO] [mgmt-auth-gr-controller] Creating clusterRole cattle-globalrole-catalogs-use for corresponding GlobalRole
+2019/12/05 11:19:01 [INFO] [mgmt-auth-gr-controller] Creating clusterRole cattle-globalrole-features-manage for corresponding GlobalRole
+2019/12/05 11:19:01 [INFO] [mgmt-auth-gr-controller] Creating clusterRole cattle-globalrole-clusters-create for corresponding GlobalRole
+2019/12/05 11:19:01 [INFO] Creating users-manage
+2019/12/05 11:19:01 [INFO] [mgmt-auth-gr-controller] Creating clusterRole cattle-globalrole-catalogs-manage for corresponding GlobalRole
+2019/12/05 11:19:01 [INFO] Creating roles-manage
+2019/12/05 11:19:01 [INFO] [mgmt-auth-gr-controller] Creating clusterRole cattle-globalrole-users-manage for corresponding GlobalRole
+2019/12/05 11:19:01 [INFO] Creating podsecuritypolicytemplates-manage
+2019/12/05 11:19:01 [INFO] [mgmt-auth-gr-controller] Creating clusterRole cattle-globalrole-roles-manage for corresponding GlobalRole
+2019/12/05 11:19:01 [INFO] Creating clustertemplates-create
+2019/12/05 11:19:01 [INFO] Creating admin
+2019/12/05 11:19:01 [INFO] [mgmt-auth-gr-controller] Creating clusterRole cattle-globalrole-podsecuritypolicytemplates-manage for corresponding GlobalRole
+2019/12/05 11:19:01 [INFO] [mgmt-auth-gr-controller] Creating clusterRole cattle-globalrole-clustertemplates-create for corresponding GlobalRole
+2019/12/05 11:19:01 [INFO] Creating user-base
+2019/12/05 11:19:01 [INFO] [mgmt-auth-gr-controller] Creating clusterRole cattle-globalrole-admin for corresponding GlobalRole
+2019/12/05 11:19:01 [INFO] Creating kontainerdrivers-manage
+2019/12/05 11:19:01 [INFO] Creating authn-manage
+2019/12/05 11:19:01 [INFO] [mgmt-auth-gr-controller] Creating clusterRole cattle-globalrole-user-base for corresponding GlobalRole
+2019/12/05 11:19:01 [INFO] Creating settings-manage
+2019/12/05 11:19:01 [INFO] [mgmt-auth-gr-controller] Creating clusterRole cattle-globalrole-kontainerdrivers-manage for corresponding GlobalRole
+2019/12/05 11:19:01 [INFO] Reconciling RoleTemplates
+2019/12/05 11:19:01 [INFO] [mgmt-auth-gr-controller] Creating clusterRole cattle-globalrole-authn-manage for corresponding GlobalRole
+2019/12/05 11:19:01 [INFO] Creating configmaps-view
+2019/12/05 11:19:01 [INFO] [mgmt-auth-gr-controller] Creating clusterRole cattle-globalrole-settings-manage for corresponding GlobalRole
+2019/12/05 11:19:01 [INFO] Creating edit
+2019/12/05 11:19:01 [INFO] Creating view
+2019/12/05 11:19:01 [INFO] Creating projects-view
+2019/12/05 11:19:01 [INFO] Creating services-view
+2019/12/05 11:19:01 [INFO] Creating secrets-view
+2019/12/05 11:19:01 [INFO] Creating services-manage
+2019/12/05 11:19:01 [INFO] Creating persistentvolumeclaims-manage
+2019/12/05 11:19:01 [INFO] Creating cluster-member
+2019/12/05 11:19:01 [INFO] Creating nodes-manage
+2019/12/05 11:19:01 [INFO] Creating storage-manage
+2019/12/05 11:19:01 [INFO] Creating clustercatalogs-manage
+2019/12/05 11:19:01 [INFO] Creating backups-manage
+2019/12/05 11:19:01 [INFO] Creating projects-create
+2019/12/05 11:19:01 [INFO] Creating projectcatalogs-view
+2019/12/05 11:19:01 [INFO] Creating ingress-manage
+2019/12/05 11:19:01 [INFO] Creating nodes-view
+2019/12/05 11:19:01 [INFO] Creating clusterroletemplatebindings-manage
+2019/12/05 11:19:01 [INFO] Creating clusterroletemplatebindings-view
+2019/12/05 11:19:01 [INFO] Creating clustercatalogs-view
+2019/12/05 11:19:01 [INFO] Creating clusterscans-manage
+2019/12/05 11:19:01 [INFO] Creating workloads-view
+2019/12/05 11:19:01 [INFO] Creating projectroletemplatebindings-manage
+2019/12/05 11:19:01 [INFO] Creating cluster-admin
+2019/12/05 11:19:01 [INFO] Creating cluster-owner
+2019/12/05 11:19:01 [INFO] Creating project-member
+2019/12/05 11:19:01 [INFO] Creating create-ns
+2019/12/05 11:19:01 [INFO] Creating workloads-manage
+2019/12/05 11:19:01 [INFO] Creating persistentvolumeclaims-view
+2019/12/05 11:19:01 [INFO] Creating serviceaccounts-view
+2019/12/05 11:19:01 [INFO] Creating projectroletemplatebindings-view
+2019/12/05 11:19:01 [INFO] Creating projectcatalogs-manage
+2019/12/05 11:19:01 [INFO] Creating read-only
+2019/12/05 11:19:01 [INFO] Creating secrets-manage
+2019/12/05 11:19:01 [INFO] Creating project-monitoring-readonly
+2019/12/05 11:19:01 [INFO] Creating admin
+2019/12/05 11:19:01 [INFO] Creating project-owner
+2019/12/05 11:19:01 [INFO] Creating ingress-view
+2019/12/05 11:19:01 [INFO] Creating configmaps-manage
+2019/12/05 11:19:01 [INFO] Creating serviceaccounts-manage
+2019/12/05 11:19:01 [INFO] Created default admin user and binding
+2019/12/05 11:19:01 [INFO] Creating new GlobalRoleBinding for GlobalRoleBinding globalrolebinding-kd8md
+2019/12/05 11:19:01 [INFO] [mgmt-auth-grb-controller] Creating clusterRoleBinding for globalRoleBinding globalrolebinding-kd8md for user user-hs28r with role cattle-globalrole-admin
+2019/12/05 11:19:01 [INFO] [mgmt-cluster-rbac-delete] Creating namespace local
+2019/12/05 11:19:01 [INFO] [mgmt-cluster-rbac-delete] Creating Default project for cluster local
+2019/12/05 11:19:01 [INFO] [mgmt-cluster-rbac-delete] Creating System project for cluster local
+2019/12/05 11:19:01 [INFO] [mgmt-project-rbac-create] Creating namespace p-qq9qr
+2019/12/05 11:19:01 [INFO] [mgmt-project-rbac-create] Creating namespace p-t574d
+2019/12/05 11:19:01 [INFO] [mgmt-cluster-rbac-delete] Updating cluster local
+2019/12/05 11:19:01 [INFO] [mgmt-project-rbac-create] Creating creator projectRoleTemplateBinding for user user-hs28r for project p-qq9qr
+2019/12/05 11:19:01 [INFO] [mgmt-project-rbac-create] Creating creator projectRoleTemplateBinding for user user-hs28r for project p-t574d
+2019/12/05 11:19:01 [INFO] [mgmt-auth-crtb-controller] Setting InitialRolesPopulated condition on project p-qq9qr
+2019/12/05 11:19:01 [INFO] [mgmt-auth-crtb-controller] Setting InitialRolesPopulated condition on project p-t574d
+2019/12/05 11:19:01 [INFO] [mgmt-project-rbac-create] Creating creator clusterRoleTemplateBinding for user user-hs28r for cluster local
+2019/12/05 11:19:01 [INFO] [mgmt-project-rbac-create] Updating project p-t574d
+2019/12/05 11:19:01 [INFO] [mgmt-auth-prtb-controller] Creating clusterRole p-t574d-projectowner
+2019/12/05 11:19:01 [INFO] [mgmt-auth-prtb-controller] Creating clusterRole p-qq9qr-projectowner
+2019/12/05 11:19:01 [INFO] [mgmt-project-rbac-create] Updating project p-qq9qr
+2019/12/05 11:19:01 [INFO] [mgmt-auth-prtb-controller] Creating roleBinding for membership in project p-qq9qr for subject user-hs28r
+2019/12/05 11:19:01 [INFO] [mgmt-project-rbac-create] Updating project p-qq9qr
+2019/12/05 11:19:01 [INFO] [mgmt-auth-prtb-controller] Creating roleBinding for membership in project p-t574d for subject user-hs28r
+2019/12/05 11:19:01 [INFO] [mgmt-auth-crtb-controller] Creating clusterRole local-clusterowner
+2019/12/05 11:19:01 [INFO] [mgmt-project-rbac-create] Updating project p-t574d
+2019/12/05 11:19:01 [INFO] [mgmt-auth-crtb-controller] Setting InitialRolesPopulated condition on cluster 
+2019/12/05 11:19:01 [INFO] [mgmt-cluster-rbac-delete] Updating cluster local
+2019/12/05 11:19:01 [INFO] [mgmt-auth-prtb-controller] Creating clusterRole local-clustermember
+2019/12/05 11:19:01 [INFO] [mgmt-auth-prtb-controller] Creating clusterRoleBinding for membership in cluster local for subject user-hs28r
+2019/12/05 11:19:01 [INFO] [mgmt-auth-prtb-controller] Creating clusterRoleBinding for membership in cluster local for subject user-hs28r
+2019/12/05 11:19:01 [INFO] [mgmt-auth-crtb-controller] Creating clusterRoleBinding for membership in cluster local for subject user-hs28r
+2019/12/05 11:19:01 [INFO] [mgmt-auth-crtb-controller] Creating role cluster-owner in namespace local
+2019/12/05 11:19:01 [INFO] [mgmt-auth-prtb-controller] Creating role project-owner in namespace local
+2019/12/05 11:19:01 [INFO] [mgmt-auth-prtb-controller] Creating role project-owner in namespace local
+2019/12/05 11:19:01 [INFO] [mgmt-auth-prtb-controller] Creating roleBinding for subject user-hs28r with role project-owner in namespace 
+2019/12/05 11:19:01 [INFO] [mgmt-auth-crtb-controller] Creating roleBinding for subject user-hs28r with role cluster-owner in namespace 
+2019/12/05 11:19:01 [INFO] [mgmt-auth-crtb-controller] Creating role cluster-owner in namespace p-qq9qr
+2019/12/05 11:19:01 [INFO] [mgmt-auth-prtb-controller] Creating role project-owner in namespace p-qq9qr
+2019/12/05 11:19:01 [ERROR] ProjectRoleTemplateBindingController p-t574d/creator-project-owner [mgmt-auth-prtb-controller] failed with : couldn't create role project-owner: roles.rbac.authorization.k8s.io "project-owner" already exists
+2019/12/05 11:19:01 [INFO] [mgmt-auth-prtb-controller] Updating clusterRoleBinding clusterrolebinding-svr7b for cluster membership in cluster local for subject user-hs28r
+2019/12/05 11:19:01 [INFO] [mgmt-auth-prtb-controller] Creating roleBinding for subject user-hs28r with role project-owner in namespace 
+2019/12/05 11:19:01 [INFO] [mgmt-auth-prtb-controller] Creating roleBinding for subject user-hs28r with role project-owner in namespace 
+2019/12/05 11:19:01 [INFO] [mgmt-auth-crtb-controller] Creating roleBinding for subject user-hs28r with role cluster-owner in namespace 
+2019/12/05 11:19:01 [INFO] [mgmt-auth-prtb-controller] Creating role project-owner in namespace p-t574d
+2019/12/05 11:19:01 [INFO] [mgmt-auth-crtb-controller] Creating role cluster-owner in namespace p-t574d
+2019/12/05 11:19:01 [INFO] [mgmt-cluster-rbac-delete] Updating cluster local
+2019/12/05 11:19:01 [INFO] [mgmt-auth-prtb-controller] Creating roleBinding for subject user-hs28r with role project-owner in namespace 
+2019/12/05 11:19:01 [INFO] [mgmt-auth-crtb-controller] Creating roleBinding for subject user-hs28r with role cluster-owner in namespace 
+2019/12/05 11:19:01 [INFO] adding kontainer driver rancherKubernetesEngine
+2019/12/05 11:19:01 [INFO] adding kontainer driver googleKubernetesEngine
+2019/12/05 11:19:01 [INFO] create kontainerdriver rancherkubernetesengine
+2019/12/05 11:19:01 [INFO] adding kontainer driver azureKubernetesService
+2019/12/05 11:19:01 [INFO] [mgmt-auth-prtb-controller] Updating clusterRoleBinding clusterrolebinding-vxwzv for cluster membership in cluster local for subject user-hs28r
+2019/12/05 11:19:01 [INFO] adding kontainer driver amazonElasticContainerService
+2019/12/05 11:19:01 [INFO] create kontainerdriver googlekubernetesengine
+2019/12/05 11:19:01 [INFO] create kontainerdriver rancherkubernetesengine
+2019/12/05 11:19:01 [INFO] create kontainerdriver azurekubernetesservice
+2019/12/05 11:19:01 [INFO] adding kontainer driver baiducloudcontainerengine
+2019/12/05 11:19:01 [INFO] adding kontainer driver aliyunkubernetescontainerservice
+2019/12/05 11:19:01 [INFO] create kontainerdriver amazonelasticcontainerservice
+2019/12/05 11:19:01 [INFO] create kontainerdriver googlekubernetesengine
+2019/12/05 11:19:01 [INFO] create kontainerdriver baiducloudcontainerengine
+2019/12/05 11:19:01 [INFO] adding kontainer driver tencentkubernetesengine
+2019/12/05 11:19:01 [INFO] update kontainerdriver rancherkubernetesengine
+2019/12/05 11:19:01 [INFO] create kontainerdriver azurekubernetesservice
+2019/12/05 11:19:01 [INFO] create kontainerdriver aliyunkubernetescontainerservice
+2019/12/05 11:19:01 [INFO] adding kontainer driver huaweicontainercloudengine
+2019/12/05 11:19:01 [INFO] update kontainerdriver googlekubernetesengine
+2019/12/05 11:19:01 [INFO] create kontainerdriver tencentkubernetesengine
+2019/12/05 11:19:01 [INFO] update kontainerdriver amazonelasticcontainerservice
+2019/12/05 11:19:01 [INFO] update kontainerdriver azurekubernetesservice
+2019/12/05 11:19:01 [INFO] Created cattle-global-nt namespace
+2019/12/05 11:19:01 [INFO] Creating node driver pinganyunecs
+2019/12/05 11:19:01 [INFO] create kontainerdriver baiducloudcontainerengine
+2019/12/05 11:19:01 [INFO] create kontainerdriver huaweicontainercloudengine
+2019/12/05 11:19:01 [INFO] Creating node driver aliyunecs
+2019/12/05 11:19:01 [INFO] update kontainerdriver baiducloudcontainerengine
+2019/12/05 11:19:01 [INFO] create kontainerdriver tencentkubernetesengine
+2019/12/05 11:19:01 [INFO] create kontainerdriver aliyunkubernetescontainerservice
+2019/12/05 11:19:01 [INFO] Creating node driver amazonec2
+2019/12/05 11:19:01 [INFO] update kontainerdriver aliyunkubernetescontainerservice
+2019/12/05 11:19:01 [INFO] create kontainerdriver huaweicontainercloudengine
+2019/12/05 11:19:01 [INFO] update kontainerdriver tencentkubernetesengine
+2019/12/05 11:19:01 [INFO] Creating node driver azure
+2019/12/05 11:19:01 [INFO] update kontainerdriver huaweicontainercloudengine
+2019/12/05 11:19:01 [INFO] Creating node driver cloudca
+2019/12/05 11:19:01 [INFO] Creating node driver digitalocean
+2019/12/05 11:19:01 [INFO] Creating node driver exoscale
+2019/12/05 11:19:01 [INFO] Creating node driver linode
+2019/12/05 11:19:01 [INFO] Creating node driver openstack
+2019/12/05 11:19:01 [INFO] Creating node driver otc
+2019/12/05 11:19:01 [INFO] Creating node driver packet
+2019/12/05 11:19:02 [INFO] Creating node driver rackspace
+2019/12/05 11:19:02 [INFO] Creating node driver softlayer
+2019/12/05 11:19:02 [INFO] Creating node driver vmwarevsphere
+2019/12/05 11:19:02 [INFO] Rancher startup complete
+2019/12/05 11:19:02 [INFO] uploading azureConfig to nodeconfig schema
+2019/12/05 11:19:02 [INFO] Registering project network policy
+2019/12/05 11:19:02 [INFO] Registering CIS controller
+2019/12/05 11:19:02 [INFO] registering podsecuritypolicy cluster handler for cluster local
+2019/12/05 11:19:02 [INFO] registering podsecuritypolicy project handler for cluster local
+2019/12/05 11:19:02 [INFO] registering podsecuritypolicy namespace handler for cluster local
+2019/12/05 11:19:02 [INFO] registering podsecuritypolicy serviceaccount handler for cluster local
+2019/12/05 11:19:02 [INFO] registering podsecuritypolicy template handler for cluster local
+2019/12/05 11:19:02 [INFO] uploading azureConfig to nodetemplateconfig schema
+2019/12/05 11:19:02 [INFO] uploading azurecredentialConfig to credentialconfig schema
+2019/12/05 11:19:02 [INFO] uploading amazonec2Config to nodeconfig schema
+2019/12/05 11:19:02 [INFO] uploading amazonec2Config to nodetemplateconfig schema
+2019/12/05 11:19:02 [INFO] uploading digitaloceanConfig to nodeconfig schema
+2019/12/05 11:19:02 [INFO] uploading digitaloceanConfig to nodetemplateconfig schema
+2019/12/05 11:19:02 [INFO] uploading vmwarevsphereConfig to nodeconfig schema
+2019/12/05 11:19:02 [INFO] uploading vmwarevsphereConfig to nodetemplateconfig schema
+2019/12/05 11:19:02 [INFO] uploading amazonec2credentialConfig to credentialconfig schema
+2019/12/05 11:19:02 [INFO] uploading digitaloceancredentialConfig to credentialconfig schema
+2019/12/05 11:19:02 [INFO] uploading vmwarevspherecredentialConfig to credentialconfig schema
+2019/12/05 11:19:02 [INFO] Registering monitoring for cluster "local"
+2019/12/05 11:19:02 [INFO] Registering istio for cluster "local"
+2019/12/05 11:19:02 [INFO] Creating CRD prometheuses.monitoring.coreos.com
+2019/12/05 11:19:02 [INFO] Creating CRD prometheusrules.monitoring.coreos.com
+2019/12/05 11:19:02 [INFO] Creating CRD alertmanagers.monitoring.coreos.com
+2019/12/05 11:19:02 [INFO] Creating CRD servicemonitors.monitoring.coreos.com
+2019/12/05 11:19:02 [INFO] Waiting for CRD servicemonitors.monitoring.coreos.com to become available
+2019/12/05 11:19:02 [INFO] update kontainerdriver rancherkubernetesengine
+2019/12/05 11:19:02 [INFO] update kontainerdriver baiducloudcontainerengine
+2019/12/05 11:19:02 [INFO] update kontainerdriver aliyunkubernetescontainerservice
+2019/12/05 11:19:02 [INFO] update kontainerdriver tencentkubernetesengine
+2019/12/05 11:19:02 [INFO] update kontainerdriver huaweicontainercloudengine
+2019/12/05 11:19:02 [INFO] Done waiting for CRD servicemonitors.monitoring.coreos.com to become available
+2019/12/05 11:19:02 [INFO] Registering namespaceHandler for adding labels 
+2019/12/05 11:19:02 [INFO] Starting cluster controllers for local
+2019/12/05 11:19:02 [INFO] Starting cluster agent for local [owner=true]
+2019/12/05 11:19:02 [ERROR] CatalogController system-library [system-image-upgrade-catalog-controller] failed with : upgrade cluster local system service alerting failed: get template cattle-global-data:system-library-rancher-monitoring failed, catalogTemplate.management.cattle.io "cattle-global-data/system-library-rancher-monitoring" not found
+2019/12/05 11:19:02 [INFO] Creating clusterRole for roleTemplate Cluster Owner (cluster-owner).
+2019/12/05 11:19:03 [INFO] Creating clusterRole for roleTemplate Project Owner (project-owner).
+2019/12/05 11:19:03 [INFO] Creating roleBinding User user-hs28r Role cluster-owner
+2019/12/05 11:19:03 [INFO] Updating role project-owner in p-qq9qr because of rules difference with roleTemplate Project Owner (project-owner).
+2019/12/05 11:19:03 [INFO] Creating clusterRole for roleTemplate Project Owner (project-owner).
+2019/12/05 11:19:03 [INFO] Updating role project-owner in p-t574d because of rules difference with roleTemplate Project Owner (project-owner).
+2019/12/05 11:19:03 [INFO] Creating clusterRole project-owner-promoted for project access to global resource.
+2019/12/05 11:19:03 [INFO] Creating clusterRole project-owner-promoted for project access to global resource.
+2019/12/05 11:19:03 [INFO] Creating clusterRole project-owner-promoted for project access to global resource.
+2019/12/05 11:19:03 [ERROR] ProjectRoleTemplateBindingController p-t574d/creator-project-owner [cluster-prtb-sync] failed with : couldn't create role project-owner-promoted: clusterroles.rbac.authorization.k8s.io "project-owner-promoted" already exists
+2019/12/05 11:19:03 [INFO] Creating roleBinding User user-hs28r Role project-owner
+2019/12/05 11:19:03 [ERROR] ProjectRoleTemplateBindingController p-qq9qr/creator-project-owner [cluster-prtb-sync] failed with : couldn't create role project-owner-promoted: clusterroles.rbac.authorization.k8s.io "project-owner-promoted" already exists
+2019/12/05 11:19:03 [INFO] Creating roleBinding User user-hs28r Role admin
+2019/12/05 11:19:03 [WARNING] error updating ns p-qq9qr status: Operation cannot be fulfilled on namespaces "p-qq9qr": the object has been modified; please apply your changes to the latest version and try again
+2019/12/05 11:19:03 [INFO] Creating roleBinding User user-hs28r Role admin
+2019/12/05 11:19:03 [ERROR] ClusterAlertGroupController local/etcd-alert [cluster-alert-group-deployer] failed with : update cluster local failed, Operation cannot be fulfilled on clusters.management.cattle.io "local": the object has been modified; please apply your changes to the latest version and try again
+2019/12/05 11:19:03 [ERROR] ClusterAlertRuleController local/high-memmory [cluster-alert-rule-deployer] failed with : update cluster local failed, Operation cannot be fulfilled on clusters.management.cattle.io "local": the object has been modified; please apply your changes to the latest version and try again
+2019/12/05 11:19:03 [ERROR] ClusterAlertRuleController local/high-cpu-load [cluster-alert-rule-deployer] failed with : update cluster local failed, Operation cannot be fulfilled on clusters.management.cattle.io "local": the object has been modified; please apply your changes to the latest version and try again
+2019/12/05 11:19:03 [ERROR] ClusterAlertRuleController local/deployment-event-alert [cluster-alert-rule-deployer] failed with : update cluster local failed, Operation cannot be fulfilled on clusters.management.cattle.io "local": the object has been modified; please apply your changes to the latest version and try again
+2019/12/05 11:19:03 [ERROR] ClusterAlertRuleController local/etcd-system-service [cluster-alert-rule-deployer] failed with : update cluster local failed, Operation cannot be fulfilled on clusters.management.cattle.io "local": the object has been modified; please apply your changes to the latest version and try again
+2019/12/05 11:19:03 [ERROR] ClusterAlertGroupController local/event-alert [cluster-alert-group-deployer] failed with : update cluster local failed, Operation cannot be fulfilled on clusters.management.cattle.io "local": the object has been modified; please apply your changes to the latest version and try again
+2019/12/05 11:19:03 [INFO] Creating roleBinding User user-hs28r Role project-owner
+2019/12/05 11:19:03 [INFO] Creating roleBinding User user-hs28r Role project-owner
+2019/12/05 11:19:03 [INFO] Updating clusterRole project-owner-promoted for project access to global resource.
+2019/12/05 11:19:03 [INFO] Creating roleBinding User user-hs28r Role admin
+2019/12/05 11:19:03 [ERROR] ClusterAlertGroupController local/kube-components-alert [cluster-alert-group-deployer] failed with : update cluster local failed, Operation cannot be fulfilled on clusters.management.cattle.io "local": the object has been modified; please apply your changes to the latest version and try again
+2019/12/05 11:19:03 [INFO] Updating clusterRole project-owner-promoted for project access to global resource.
+2019/12/05 11:19:03 [ERROR] ClusterAlertGroupController local/node-alert [cluster-alert-group-deployer] failed with : update cluster local failed, Operation cannot be fulfilled on clusters.management.cattle.io "local": the object has been modified; please apply your changes to the latest version and try again
+2019/12/05 11:19:03 [INFO] Updating clusterRole project-owner-promoted for project access to global resource.
+2019/12/05 11:19:03 [INFO] Creating roleBinding User user-hs28r Role project-owner
+2019/12/05 11:19:03 [INFO] Creating roleBinding User user-hs28r Role project-owner
+2019/12/05 11:19:03 [ERROR] CatalogController system-library [system-image-upgrade-catalog-controller] failed with : upgrade cluster local system service alerting failed: get template cattle-global-data:system-library-rancher-monitoring failed, catalogTemplate.management.cattle.io "cattle-global-data/system-library-rancher-monitoring" not found
+2019/12/05 11:19:03 [INFO] namespaceHandler: addProjectIDLabelToNamespace: adding label field.cattle.io/projectId=p-qq9qr to namespace=default
+2019/12/05 11:19:03 [INFO] Creating roleBinding User user-hs28r Role admin
+2019/12/05 11:19:03 [INFO] Creating roleBinding User user-hs28r Role admin
+2019/12/05 11:19:03 [INFO] namespaceHandler: addProjectIDLabelToNamespace: adding label field.cattle.io/projectId=p-t574d to namespace=cattle-system
+2019/12/05 11:19:03 [INFO] Creating roleBinding User user-hs28r Role project-owner
+2019/12/05 11:19:03 [INFO] Creating user for principal system://p-qq9qr
+2019/12/05 11:19:03 [INFO] Creating roleBinding User user-hs28r Role admin
+2019/12/05 11:19:03 [INFO] Updating global catalog system-library
+2019/12/05 11:19:03 [INFO] Creating user for principal system://p-t574d
+2019/12/05 11:19:03 [INFO] Creating globalRoleBindings for u-pryno2n2ad
+2019/12/05 11:19:03 [INFO] Updating clusterRole project-owner-promoted for project access to global resource.
+2019/12/05 11:19:03 [INFO] Creating globalRoleBindings for u-6jjekt7lat
+2019/12/05 11:19:03 [INFO] namespaceHandler: addProjectIDLabelToNamespace: adding label field.cattle.io/projectId=p-t574d to namespace=kube-node-lease
+2019/12/05 11:19:03 [INFO] namespaceHandler: addProjectIDLabelToNamespace: adding label field.cattle.io/projectId=p-t574d to namespace=cattle-global-data
+2019/12/05 11:19:03 [INFO] Updating clusterRole project-owner-promoted for project access to global resource.
+2019/12/05 11:19:03 [INFO] Updating clusterRole project-owner-promoted for project access to global resource.
+2019/12/05 11:19:03 [INFO] namespaceHandler: addProjectIDLabelToNamespace: adding label field.cattle.io/projectId=p-t574d to namespace=kube-public
+2019/12/05 11:19:03 [INFO] Creating new GlobalRoleBinding for GlobalRoleBinding grb-6fkgm
+2019/12/05 11:19:03 [INFO] [mgmt-auth-grb-controller] Creating clusterRoleBinding for globalRoleBinding grb-6fkgm for user u-pryno2n2ad with role cattle-globalrole-user
+2019/12/05 11:19:03 [INFO] Creating new GlobalRoleBinding for GlobalRoleBinding grb-jl782
+2019/12/05 11:19:03 [INFO] [mgmt-auth-grb-controller] Creating clusterRoleBinding for globalRoleBinding grb-jl782 for user u-6jjekt7lat with role cattle-globalrole-user
+2019/12/05 11:19:03 [ERROR] CatalogController system-library [system-image-upgrade-catalog-controller] failed with : upgrade cluster local system service alerting failed: get template cattle-global-data:system-library-rancher-monitoring failed, catalogTemplate.management.cattle.io "cattle-global-data/system-library-rancher-monitoring" not found
+2019/12/05 11:19:03 [INFO] Creating clusterRole for roleTemplate Project Member (project-member).
+2019/12/05 11:19:03 [INFO] Creating clusterRole for roleTemplate Project Member (project-member).
+2019/12/05 11:19:03 [INFO] Creating roleBinding User u-pryno2n2ad Role project-member
+2019/12/05 11:19:03 [INFO] Creating roleBinding User u-pryno2n2ad Role edit
+2019/12/05 11:19:03 [INFO] [mgmt-auth-prtb-controller] Creating clusterRole p-t574d-projectmember
+2019/12/05 11:19:03 [ERROR] ProjectController local/p-t574d [system-image-upgrade-controller] failed with : upgrade cluster local system service alerting failed: get template cattle-global-data:system-library-rancher-monitoring failed, catalogTemplate.management.cattle.io "cattle-global-data/system-library-rancher-monitoring" not found
+2019/12/05 11:19:03 [ERROR] ProjectController local/p-qq9qr [system-image-upgrade-controller] failed with : upgrade cluster local system service logging failed: cluster local not ready
+2019/12/05 11:19:03 [INFO] Creating roleBinding User u-6jjekt7lat Role project-member
+2019/12/05 11:19:03 [INFO] [mgmt-auth-prtb-controller] Creating clusterRole p-qq9qr-projectmember
+2019/12/05 11:19:03 [INFO] Creating clusterRole project-member-promoted for project access to global resource.
+2019/12/05 11:19:03 [INFO] [mgmt-auth-prtb-controller] Creating roleBinding for membership in project p-t574d for subject u-6jjekt7lat
+2019/12/05 11:19:03 [INFO] Creating roleBinding User u-6jjekt7lat Role project-member
+2019/12/05 11:19:03 [INFO] Creating roleBinding User u-6jjekt7lat Role edit
+2019/12/05 11:19:03 [INFO] Creating roleBinding User u-6jjekt7lat Role project-member
+2019/12/05 11:19:03 [INFO] Creating roleBinding User u-6jjekt7lat Role project-member
+2019/12/05 11:19:03 [INFO] Creating clusterRole project-member-promoted for project access to global resource.
+2019/12/05 11:19:03 [INFO] [mgmt-auth-prtb-controller] Creating clusterRoleBinding for membership in cluster local for subject u-6jjekt7lat
+2019/12/05 11:19:03 [INFO] [mgmt-auth-prtb-controller] Creating role project-member in namespace local
+2019/12/05 11:19:03 [INFO] [mgmt-auth-prtb-controller] Creating roleBinding for membership in project p-qq9qr for subject u-pryno2n2ad
+2019/12/05 11:19:03 [INFO] Creating roleBinding User u-6jjekt7lat Role edit
+2019/12/05 11:19:03 [INFO] Catalog sync done. 3 templates created, 0 templates updated, 0 templates deleted
+2019/12/05 11:19:03 [INFO] [mgmt-auth-prtb-controller] Creating roleBinding for subject u-6jjekt7lat with role project-member in namespace 
+2019/12/05 11:19:03 [ERROR] ProjectRoleTemplateBindingController p-qq9qr/u-pryno2n2ad-member [cluster-prtb-sync] failed with : couldn't create role project-member-promoted: clusterroles.rbac.authorization.k8s.io "project-member-promoted" already exists
+2019/12/05 11:19:03 [INFO] Updating clusterRole project-member-promoted for project access to global resource.
+2019/12/05 11:19:03 [INFO] Creating roleBinding User u-6jjekt7lat Role edit
+2019/12/05 11:19:03 [INFO] Creating roleBinding User u-6jjekt7lat Role edit
+2019/12/05 11:19:03 [INFO] [mgmt-auth-prtb-controller] Creating clusterRoleBinding for membership in cluster local for subject u-pryno2n2ad
+2019/12/05 11:19:03 [INFO] [mgmt-auth-prtb-controller] Creating role project-member in namespace p-t574d
+2019/12/05 11:19:03 [INFO] Creating roleBinding User u-6jjekt7lat Role project-member
+2019/12/05 11:19:03 [INFO] Creating roleBinding User u-6jjekt7lat Role edit
+2019/12/05 11:19:03 [INFO] [mgmt-auth-prtb-controller] Creating roleBinding for subject u-pryno2n2ad with role project-member in namespace 
+2019/12/05 11:19:03 [INFO] Updating clusterRole project-member-promoted for project access to global resource.
+2019/12/05 11:19:03 [INFO] [mgmt-auth-prtb-controller] Creating roleBinding for subject u-6jjekt7lat with role project-member in namespace 
+2019/12/05 11:19:03 [INFO] [mgmt-auth-prtb-controller] Creating role project-member in namespace p-qq9qr
+2019/12/05 11:19:03 [ERROR] CatalogController system-library [system-image-upgrade-catalog-controller] failed with : upgrade cluster local system service logging failed: cluster local not ready
+2019/12/05 11:19:03 [INFO] Updating clusterRole project-member-promoted for project access to global resource.
+2019/12/05 11:19:03 [INFO] [mgmt-auth-prtb-controller] Creating roleBinding for subject u-pryno2n2ad with role project-member in namespace 
+2019/12/05 11:19:03 [INFO] Creating clusterRole for roleTemplate Create Namespaces (create-ns).
+2019/12/05 11:19:03 [ERROR] CatalogController system-library [system-image-upgrade-catalog-controller] failed with : upgrade cluster local system service logging failed: cluster local not ready
+2019/12/05 11:19:03 [INFO] Creating clusterRoleBinding for project access to global resource for subject u-6jjekt7lat role p-t574d-namespaces-edit.
+2019/12/05 11:19:04 [INFO] Updating role project-member in p-qq9qr because of rules difference with roleTemplate Project Member (project-member).
+2019/12/05 11:19:04 [INFO] Creating clusterRoleBinding for project access to global resource for subject u-6jjekt7lat role project-member-promoted.
+2019/12/05 11:19:04 [INFO] Creating clusterRoleBinding for project access to global resource for subject u-6jjekt7lat role create-ns.
+2019/12/05 11:19:04 [INFO] Updating role project-member in p-t574d because of rules difference with roleTemplate Project Member (project-member).
+2019/12/05 11:19:04 [INFO] Creating clusterRoleBinding for project access to global resource for subject u-pryno2n2ad role p-qq9qr-namespaces-edit.
+2019/12/05 11:19:04 [INFO] Creating clusterRoleBinding for project access to global resource for subject u-pryno2n2ad role project-member-promoted.
+2019/12/05 11:19:04 [INFO] Updating role project-member in p-t574d because of rules difference with roleTemplate Project Member (project-member).
+2019/12/05 11:19:04 [INFO] Creating clusterRoleBinding for project access to global resource for subject u-pryno2n2ad role create-ns.
+2019/12/05 11:19:04 [INFO] namespaceHandler: addProjectIDLabelToNamespace: adding label field.cattle.io/projectId=p-t574d to namespace=kube-system
+2019/12/05 11:19:04 [ERROR] ProjectController local/p-qq9qr [system-image-upgrade-controller] failed with : upgrade cluster local system service logging failed: cluster local not ready
+2019/12/05 11:19:04 [ERROR] ProjectController local/p-t574d [system-image-upgrade-controller] failed with : upgrade cluster local system service logging failed: cluster local not ready
+2019/12/05 11:19:04 [ERROR] ProjectController local/p-qq9qr [system-image-upgrade-controller] failed with : upgrade cluster local system service logging failed: cluster local not ready
+2019/12/05 11:19:04 [INFO] namespaceHandler: addProjectIDLabelToNamespace: adding label field.cattle.io/projectId=p-t574d to namespace=kube-system
+2019/12/05 11:19:04 [ERROR] namespaceHandler: Sync: error adding project id label to namespace err=Operation cannot be fulfilled on namespaces "kube-system": the object has been modified; please apply your changes to the latest version and try again
+2019/12/05 11:19:04 [ERROR] ProjectController local/p-t574d [system-image-upgrade-controller] failed with : upgrade cluster local system service logging failed: cluster local not ready
+2019/12/05 11:19:04 [ERROR] ProjectController local/p-qq9qr [system-image-upgrade-controller] failed with : upgrade cluster local system service logging failed: cluster local not ready
+2019/12/05 11:19:04 [ERROR] ProjectController local/p-t574d [system-image-upgrade-controller] failed with : upgrade cluster local system service logging failed: cluster local not ready
+2019/12/05 11:19:04 [ERROR] ProjectController local/p-qq9qr [system-image-upgrade-controller] failed with : upgrade cluster local system service logging failed: cluster local not ready
+2019/12/05 11:19:04 [ERROR] ProjectController local/p-t574d [system-image-upgrade-controller] failed with : upgrade cluster local system service logging failed: cluster local not ready
+2019/12/05 11:19:04 [ERROR] ProjectController local/p-qq9qr [system-image-upgrade-controller] failed with : upgrade cluster local system service logging failed: cluster local not ready
+2019/12/05 11:19:04 [ERROR] CatalogController system-library [system-image-upgrade-catalog-controller] failed with : upgrade cluster local system service logging failed: cluster local not ready
+W1205 11:19:05.161199    5028 probe.go:268] Flexvolume plugin directory at /usr/libexec/kubernetes/kubelet-plugins/volume/exec/ does not exist. Recreating.
+E1205 11:19:05.186604    5028 resource_quota_controller.go:437] failed to sync resource monitors: [couldn't start monitor for resource "k3s.cattle.io/v1, Resource=addons": unable to monitor quota for resource "k3s.cattle.io/v1, Resource=addons", couldn't start monitor for resource "project.cattle.io/v3, Resource=pipelines": unable to monitor quota for resource "project.cattle.io/v3, Resource=pipelines", couldn't start monitor for resource "project.cattle.io/v3, Resource=apprevisions": unable to monitor quota for resource "project.cattle.io/v3, Resource=apprevisions", couldn't start monitor for resource "management.cattle.io/v3, Resource=clusterregistrationtokens": unable to monitor quota for resource "management.cattle.io/v3, Resource=clusterregistrationtokens", couldn't start monitor for resource "project.cattle.io/v3, Resource=pipelineexecutions": unable to monitor quota for resource "project.cattle.io/v3, Resource=pipelineexecutions", couldn't start monitor for resource "management.cattle.io/v3, Resource=clustermonitorgraphs": unable to monitor quota for resource "management.cattle.io/v3, Resource=clustermonitorgraphs", couldn't start monitor for resource "management.cattle.io/v3, Resource=catalogtemplates": unable to monitor quota for resource "management.cattle.io/v3, Resource=catalogtemplates", couldn't start monitor for resource "management.cattle.io/v3, Resource=clusteralerts": unable to monitor quota for resource "management.cattle.io/v3, Resource=clusteralerts", couldn't start monitor for resource "project.cattle.io/v3, Resource=sourcecoderepositories": unable to monitor quota for resource "project.cattle.io/v3, Resource=sourcecoderepositories", couldn't start monitor for resource "management.cattle.io/v3, Resource=clusterroletemplatebindings": unable to monitor quota for resource "management.cattle.io/v3, Resource=clusterroletemplatebindings", couldn't start monitor for resource "extensions/v1beta1, Resource=networkpolicies": unable to monitor quota for resource "extensions/v1beta1, Resource=networkpolicies", couldn't start monitor for resource "project.cattle.io/v3, Resource=sourcecodeproviderconfigs": unable to monitor quota for resource "project.cattle.io/v3, Resource=sourcecodeproviderconfigs", couldn't start monitor for resource "helm.cattle.io/v1, Resource=helmcharts": unable to monitor quota for resource "helm.cattle.io/v1, Resource=helmcharts", couldn't start monitor for resource "management.cattle.io/v3, Resource=catalogtemplateversions": unable to monitor quota for resource "management.cattle.io/v3, Resource=catalogtemplateversions", couldn't start monitor for resource "management.cattle.io/v3, Resource=clusterscans": unable to monitor quota for resource "management.cattle.io/v3, Resource=clusterscans", couldn't start monitor for resource "project.cattle.io/v3, Resource=apps": unable to monitor quota for resource "project.cattle.io/v3, Resource=apps", couldn't start monitor for resource "management.cattle.io/v3, Resource=etcdbackups": unable to monitor quota for resource "management.cattle.io/v3, Resource=etcdbackups", couldn't start monitor for resource "management.cattle.io/v3, Resource=clusteralertrules": unable to monitor quota for resource "management.cattle.io/v3, Resource=clusteralertrules", couldn't start monitor for resource "management.cattle.io/v3, Resource=clusteralertgroups": unable to monitor quota for resource "management.cattle.io/v3, Resource=clusteralertgroups", couldn't start monitor for resource "k3s.cattle.io/v1, Resource=listenerconfigs": unable to monitor quota for resource "k3s.cattle.io/v1, Resource=listenerconfigs", couldn't start monitor for resource "management.cattle.io/v3, Resource=clusterloggings": unable to monitor quota for resource "management.cattle.io/v3, Resource=clusterloggings", couldn't start monitor for resource "management.cattle.io/v3, Resource=clustercatalogs": unable to monitor quota for resource "management.cattle.io/v3, Resource=clustercatalogs", couldn't start monitor for resource "project.cattle.io/v3, Resource=pipelinesettings": unable to monitor quota for resource "project.cattle.io/v3, Resource=pipelinesettings", couldn't start monitor for resource "project.cattle.io/v3, Resource=sourcecodecredentials": unable to monitor quota for resource "project.cattle.io/v3, Resource=sourcecodecredentials"]
+2019/12/05 11:19:05 [INFO] Updating global catalog library
+2019/12/05 11:19:05 http: TLS handshake error from 127.0.0.1:49946: EOF
+2019/12/05 11:19:05 [INFO] Creating clusterRoleBinding for project access to global resource for subject user-hs28r role p-qq9qr-namespaces-edit.
+2019/12/05 11:19:05 [INFO] Creating clusterRoleBinding for project access to global resource for subject user-hs28r role project-owner-promoted.
+2019/12/05 11:19:05 [INFO] Creating clusterRoleBinding for project access to global resource for subject user-hs28r role project-owner-promoted.
+2019/12/05 11:19:05 [INFO] Creating clusterRoleBinding for project access to global resource for subject user-hs28r role create-ns.
+2019/12/05 11:19:05 [INFO] [mgmt-auth-prtb-controller] Creating role admin in namespace p-qq9qr
+2019/12/05 11:19:05 [INFO] Creating clusterRoleBinding for project access to global resource for subject user-hs28r role p-t574d-namespaces-edit.
+2019/12/05 11:19:05 [INFO] Updating clusterRoleBinding clusterrolebinding-kk66r for project access to global resource for subject user-hs28r role project-owner-promoted.
+2019/12/05 11:19:05 [INFO] [mgmt-auth-prtb-controller] Creating roleBinding for subject user-hs28r with role admin in namespace 
+2019/12/05 11:19:05 [INFO] Updating clusterRoleBinding clusterrolebinding-kgmwb for project access to global resource for subject user-hs28r role project-owner-promoted.
+2019/12/05 11:19:05 [INFO] Updating clusterRoleBinding clusterrolebinding-rt96d for project access to global resource for subject user-hs28r role create-ns.
+2019/12/05 11:19:05 [INFO] [mgmt-auth-prtb-controller] Creating role admin in namespace p-t574d
+2019/12/05 11:19:05 [INFO] [mgmt-auth-prtb-controller] Creating roleBinding for subject user-hs28r with role admin in namespace 
+2019/12/05 11:19:06 [INFO] Updating global catalog system-library
+2019/12/05 11:19:06 [ERROR] CatalogController system-library [system-image-upgrade-catalog-controller] failed with : upgrade cluster local system service logging failed: cluster local not ready
+2019/12/05 11:19:06 [ERROR] CatalogController system-library [system-image-upgrade-catalog-controller] failed with : upgrade cluster local system service logging failed: cluster local not ready
+2019/12/05 11:19:06 [ERROR] CatalogController system-library [system-image-upgrade-catalog-controller] failed with : upgrade cluster local system service logging failed: cluster local not ready
+2019/12/05 11:19:06 [ERROR] CatalogController system-library [system-image-upgrade-catalog-controller] failed with : upgrade cluster local system service logging failed: cluster local not ready
+2019/12/05 11:19:06 [ERROR] CatalogController system-library [system-image-upgrade-catalog-controller] failed with : upgrade cluster local system service logging failed: cluster local not ready
+2019/12/05 11:19:06 [INFO] Catalog sync done. 2 templates created, 3 templates updated, 0 templates deleted
+2019/12/05 11:19:06 [ERROR] CatalogController system-library [system-image-upgrade-catalog-controller] failed with : upgrade cluster local system service logging failed: cluster local not ready
+2019/12/05 11:19:06 [INFO] kontainerdriver googlekubernetesengine listening on address 127.0.0.1:40820
+2019/12/05 11:19:06 [INFO] kontainerdriver googlekubernetesengine stopped
+2019/12/05 11:19:06 [INFO] kontainerdriver amazonelasticcontainerservice listening on address 127.0.0.1:36872
+2019/12/05 11:19:06 [INFO] kontainerdriver amazonelasticcontainerservice stopped
+2019/12/05 11:19:06 [INFO] kontainerdriver azurekubernetesservice listening on address 127.0.0.1:34012
+2019/12/05 11:19:06 [INFO] kontainerdriver azurekubernetesservice stopped
+2019/12/05 11:19:06 [INFO] update kontainerdriver googlekubernetesengine
+2019/12/05 11:19:06 [INFO] update kontainerdriver amazonelasticcontainerservice
+2019/12/05 11:19:06 [INFO] update kontainerdriver azurekubernetesservice
+2019/12/05 11:19:07 [INFO] Catalog sync done. 42 templates created, 0 templates updated, 0 templates deleted
+2019/12/05 11:19:07 [ERROR] CatalogController library [catalog] failed with : failed to sync templates. Resetting commit. Multiple error occurred: [yaml: line 4: did not find expected key]
+2019/12/05 11:19:07 [INFO] driverMetadata: refresh data
+2019/12/05 11:19:07 [ERROR] CatalogController system-library [system-image-upgrade-catalog-controller] failed with : upgrade cluster local system service logging failed: cluster local not ready
+2019/12/05 11:19:07 [INFO] driverMetadata initialized successfully
+2019/12/05 11:19:08 [INFO] Updating global catalog library
+2019/12/05 11:19:08 [INFO] Catalog sync done. 0 templates created, 0 templates updated, 0 templates deleted
+2019/12/05 11:19:11 [INFO] kontainerdriver googlekubernetesengine listening on address 127.0.0.1:33792
+2019/12/05 11:19:11 [INFO] kontainerdriver googlekubernetesengine stopped
+2019/12/05 11:19:11 [INFO] dynamic schema for kontainerdriver googlekubernetesengine updating
+2019/12/05 11:19:11 [INFO] kontainerdriver amazonelasticcontainerservice listening on address 127.0.0.1:37429
+2019/12/05 11:19:11 [INFO] kontainerdriver amazonelasticcontainerservice stopped
+2019/12/05 11:19:11 [INFO] dynamic schema for kontainerdriver amazonelasticcontainerservice updating
+2019/12/05 11:19:11 [INFO] kontainerdriver azurekubernetesservice listening on address 127.0.0.1:36827
+2019/12/05 11:19:11 [INFO] kontainerdriver azurekubernetesservice stopped
+2019/12/05 11:19:11 [INFO] dynamic schema for kontainerdriver azurekubernetesservice updating
+2019/12/05 11:19:12 [ERROR] ProjectController local/p-qq9qr [system-image-upgrade-controller] failed with : upgrade cluster local system service logging failed: cluster local not ready
+2019/12/05 11:19:12 [ERROR] ProjectController local/p-t574d [system-image-upgrade-controller] failed with : upgrade cluster local system service logging failed: cluster local not ready
+2019/12/05 11:19:35 http: TLS handshake error from 127.0.0.1:50086: EOF
+E1205 11:19:35.539346    5028 resource_quota_controller.go:437] failed to sync resource monitors: [couldn't start monitor for resource "management.cattle.io/v3, Resource=globaldnsproviders": unable to monitor quota for resource "management.cattle.io/v3, Resource=globaldnsproviders", couldn't start monitor for resource "project.cattle.io/v3, Resource=sourcecodecredentials": unable to monitor quota for resource "project.cattle.io/v3, Resource=sourcecodecredentials", couldn't start monitor for resource "management.cattle.io/v3, Resource=clusterloggings": unable to monitor quota for resource "management.cattle.io/v3, Resource=clusterloggings", couldn't start monitor for resource "management.cattle.io/v3, Resource=projectloggings": unable to monitor quota for resource "management.cattle.io/v3, Resource=projectloggings", couldn't start monitor for resource "management.cattle.io/v3, Resource=clusterregistrationtokens": unable to monitor quota for resource "management.cattle.io/v3, Resource=clusterregistrationtokens", couldn't start monitor for resource "project.cattle.io/v3, Resource=pipelines": unable to monitor quota for resource "project.cattle.io/v3, Resource=pipelines", couldn't start monitor for resource "management.cattle.io/v3, Resource=projectalertgroups": unable to monitor quota for resource "management.cattle.io/v3, Resource=projectalertgroups", couldn't start monitor for resource "management.cattle.io/v3, Resource=nodepools": unable to monitor quota for resource "management.cattle.io/v3, Resource=nodepools", couldn't start monitor for resource "project.cattle.io/v3, Resource=pipelinesettings": unable to monitor quota for resource "project.cattle.io/v3, Resource=pipelinesettings", couldn't start monitor for resource "monitoring.coreos.com/v1, Resource=servicemonitors": unable to monitor quota for resource "monitoring.coreos.com/v1, Resource=servicemonitors", couldn't start monitor for resource "monitoring.coreos.com/v1, Resource=alertmanagers": unable to monitor quota for resource "monitoring.coreos.com/v1, Resource=alertmanagers", couldn't start monitor for resource "management.cattle.io/v3, Resource=globaldnses": unable to monitor quota for resource "management.cattle.io/v3, Resource=globaldnses", couldn't start monitor for resource "management.cattle.io/v3, Resource=projects": unable to monitor quota for resource "management.cattle.io/v3, Resource=projects", couldn't start monitor for resource "monitoring.coreos.com/v1, Resource=prometheuses": unable to monitor quota for resource "monitoring.coreos.com/v1, Resource=prometheuses", couldn't start monitor for resource "management.cattle.io/v3, Resource=projectcatalogs": unable to monitor quota for resource "management.cattle.io/v3, Resource=projectcatalogs", couldn't start monitor for resource "management.cattle.io/v3, Resource=catalogtemplateversions": unable to monitor quota for resource "management.cattle.io/v3, Resource=catalogtemplateversions", couldn't start monitor for resource "management.cattle.io/v3, Resource=nodetemplates": unable to monitor quota for resource "management.cattle.io/v3, Resource=nodetemplates", couldn't start monitor for resource "management.cattle.io/v3, Resource=preferences": unable to monitor quota for resource "management.cattle.io/v3, Resource=preferences", couldn't start monitor for resource "project.cattle.io/v3, Resource=apps": unable to monitor quota for resource "project.cattle.io/v3, Resource=apps", couldn't start monitor for resource "project.cattle.io/v3, Resource=sourcecoderepositories": unable to monitor quota for resource "project.cattle.io/v3, Resource=sourcecoderepositories", couldn't start monitor for resource "management.cattle.io/v3, Resource=projectnetworkpolicies": unable to monitor quota for resource "management.cattle.io/v3, Resource=projectnetworkpolicies", couldn't start monitor for resource "management.cattle.io/v3, Resource=clusteralertgroups": unable to monitor quota for resource "management.cattle.io/v3, Resource=clusteralertgroups", couldn't start monitor for resource "management.cattle.io/v3, Resource=clusteralertrules": unable to monitor quota for resource "management.cattle.io/v3, Resource=clusteralertrules", couldn't start monitor for resource "monitoring.coreos.com/v1, Resource=prometheusrules": unable to monitor quota for resource "monitoring.coreos.com/v1, Resource=prometheusrules", couldn't start monitor for resource "management.cattle.io/v3, Resource=rkek8ssystemimages": unable to monitor quota for resource "management.cattle.io/v3, Resource=rkek8ssystemimages", couldn't start monitor for resource "management.cattle.io/v3, Resource=projectmonitorgraphs": unable to monitor quota for resource "management.cattle.io/v3, Resource=projectmonitorgraphs", couldn't start monitor for resource "management.cattle.io/v3, Resource=rkeaddons": unable to monitor quota for resource "management.cattle.io/v3, Resource=rkeaddons", couldn't start monitor for resource "management.cattle.io/v3, Resource=clustercatalogs": unable to monitor quota for resource "management.cattle.io/v3, Resource=clustercatalogs", couldn't start monitor for resource "management.cattle.io/v3, Resource=clustermonitorgraphs": unable to monitor quota for resource "management.cattle.io/v3, Resource=clustermonitorgraphs", couldn't start monitor for resource "project.cattle.io/v3, Resource=sourcecodeproviderconfigs": unable to monitor quota for resource "project.cattle.io/v3, Resource=sourcecodeproviderconfigs", couldn't start monitor for resource "management.cattle.io/v3, Resource=clusteralerts": unable to monitor quota for resource "management.cattle.io/v3, Resource=clusteralerts", couldn't start monitor for resource "management.cattle.io/v3, Resource=clusterscans": unable to monitor quota for resource "management.cattle.io/v3, Resource=clusterscans", couldn't start monitor for resource "management.cattle.io/v3, Resource=rkek8sserviceoptions": unable to monitor quota for resource "management.cattle.io/v3, Resource=rkek8sserviceoptions", couldn't start monitor for resource "management.cattle.io/v3, Resource=projectalerts": unable to monitor quota for resource "management.cattle.io/v3, Resource=projectalerts", couldn't start monitor for resource "management.cattle.io/v3, Resource=catalogtemplates": unable to monitor quota for resource "management.cattle.io/v3, Resource=catalogtemplates", couldn't start monitor for resource "extensions/v1beta1, Resource=networkpolicies": unable to monitor quota for resource "extensions/v1beta1, Resource=networkpolicies", couldn't start monitor for resource "management.cattle.io/v3, Resource=clustertemplates": unable to monitor quota for resource "management.cattle.io/v3, Resource=clustertemplates", couldn't start monitor for resource "management.cattle.io/v3, Resource=multiclusterapps": unable to monitor quota for resource "management.cattle.io/v3, Resource=multiclusterapps", couldn't start monitor for resource "helm.cattle.io/v1, Resource=helmcharts": unable to monitor quota for resource "helm.cattle.io/v1, Resource=helmcharts", couldn't start monitor for resource "management.cattle.io/v3, Resource=monitormetrics": unable to monitor quota for resource "management.cattle.io/v3, Resource=monitormetrics", couldn't start monitor for resource "management.cattle.io/v3, Resource=projectalertrules": unable to monitor quota for resource "management.cattle.io/v3, Resource=projectalertrules", couldn't start monitor for resource "management.cattle.io/v3, Resource=projectroletemplatebindings": unable to monitor quota for resource "management.cattle.io/v3, Resource=projectroletemplatebindings", couldn't start monitor for resource "project.cattle.io/v3, Resource=pipelineexecutions": unable to monitor quota for resource "project.cattle.io/v3, Resource=pipelineexecutions", couldn't start monitor for resource "management.cattle.io/v3, Resource=clustertemplaterevisions": unable to monitor quota for resource "management.cattle.io/v3, Resource=clustertemplaterevisions", couldn't start monitor for resource "management.cattle.io/v3, Resource=etcdbackups": unable to monitor quota for resource "management.cattle.io/v3, Resource=etcdbackups", couldn't start monitor for resource "management.cattle.io/v3, Resource=notifiers": unable to monitor quota for resource "management.cattle.io/v3, Resource=notifiers", couldn't start monitor for resource "management.cattle.io/v3, Resource=multiclusterapprevisions": unable to monitor quota for resource "management.cattle.io/v3, Resource=multiclusterapprevisions", couldn't start monitor for resource "management.cattle.io/v3, Resource=nodes": unable to monitor quota for resource "management.cattle.io/v3, Resource=nodes", couldn't start monitor for resource "project.cattle.io/v3, Resource=apprevisions": unable to monitor quota for resource "project.cattle.io/v3, Resource=apprevisions", couldn't start monitor for resource "k3s.cattle.io/v1, Resource=addons": unable to monitor quota for resource "k3s.cattle.io/v1, Resource=addons", couldn't start monitor for resource "k3s.cattle.io/v1, Resource=listenerconfigs": unable to monitor quota for resource "k3s.cattle.io/v1, Resource=listenerconfigs", couldn't start monitor for resource "management.cattle.io/v3, Resource=clusterroletemplatebindings": unable to monitor quota for resource "management.cattle.io/v3, Resource=clusterroletemplatebindings", couldn't start monitor for resource "management.cattle.io/v3, Resource=podsecuritypolicytemplateprojectbindings": unable to monitor quota for resource "management.cattle.io/v3, Resource=podsecuritypolicytemplateprojectbindings"]
+2019/12/05 11:19:39 [INFO] Creating token for user user-hs28r
+2019/12/05 11:19:39 [INFO] Deleting nodePool [np-k798n]
+2019/12/05 11:19:40 [INFO] Provisioning node test2
+2019/12/05 11:19:40 [INFO] [node-controller-docker-machine] Creating CA: management-state/node/nodes/test2/certs/ca.pem
+2019/12/05 11:19:40 [INFO] Provisioning node test1
+2019/12/05 11:19:40 [INFO] Deleting nodePool [np-cn55s]
+2019/12/05 11:19:40 [INFO] [node-controller-docker-machine] Creating CA: management-state/node/nodes/test1/certs/ca.pem
+2019/12/05 11:19:40 [INFO] Creating user for principal system://local
+2019/12/05 11:19:40 [INFO] Creating globalRoleBindings for u-b4qkhsnliz
+2019/12/05 11:19:40 [INFO] Creating new GlobalRoleBinding for GlobalRoleBinding grb-4j596
+2019/12/05 11:19:40 [INFO] [mgmt-auth-grb-controller] Creating clusterRoleBinding for globalRoleBinding grb-4j596 for user u-b4qkhsnliz with role cattle-globalrole-user
+2019/12/05 11:19:40 [INFO] Redeploy Rancher Agents is needed: forceDeploy=false, agent/auth image changed=true, private repo changed=false
+2019/12/05 11:19:40 [INFO] Creating token for user u-b4qkhsnliz
+2019/12/05 11:19:40 [INFO] Creating roleBinding User u-b4qkhsnliz Role cluster-owner
+2019/12/05 11:19:40 [INFO] [mgmt-auth-crtb-controller] Creating clusterRoleBinding for membership in cluster local for subject u-b4qkhsnliz
+2019/12/05 11:19:40 [INFO] [mgmt-auth-crtb-controller] Creating roleBinding for subject u-b4qkhsnliz with role cluster-owner in namespace 
+2019/12/05 11:19:40 [INFO] Deleting nodePool [np-bz8n8]
+2019/12/05 11:19:40 [INFO] [mgmt-auth-crtb-controller] Creating roleBinding for subject u-b4qkhsnliz with role cluster-owner in namespace 
+2019/12/05 11:19:40 [ERROR] ClusterController local [cluster-deploy] failed with : waiting for server-url setting to be set
+2019/12/05 11:19:40 [INFO] Redeploy Rancher Agents is needed: forceDeploy=false, agent/auth image changed=true, private repo changed=false
+2019/12/05 11:19:40 [INFO] [mgmt-auth-crtb-controller] Creating roleBinding for subject u-b4qkhsnliz with role cluster-owner in namespace 
+2019/12/05 11:19:40 [ERROR] ClusterController local [cluster-deploy] failed with : waiting for server-url setting to be set
+2019/12/05 11:19:40 [INFO] [node-controller-docker-machine] Creating client certificate: management-state/node/nodes/test1/certs/cert.pem
+2019/12/05 11:19:40 [INFO] [node-controller-docker-machine] Creating client certificate: management-state/node/nodes/test2/certs/cert.pem
+2019/12/05 11:19:40 [INFO] [node-controller-docker-machine] Running pre-create checks...
+2019/12/05 11:19:41 [INFO] [node-controller-docker-machine] Running pre-create checks...
+2019/12/05 11:19:42 [INFO] Creating new GlobalRoleBinding for GlobalRoleBinding grb-dx6n7
+2019/12/05 11:19:42 [INFO] [mgmt-auth-grb-controller] Creating clusterRoleBinding for globalRoleBinding grb-dx6n7 for user u-rvkv5 with role cattle-globalrole-user
+2019/12/05 11:19:42 [INFO] Creating new GlobalRoleBinding for GlobalRoleBinding grb-cjlln
+2019/12/05 11:19:42 [INFO] [mgmt-auth-grb-controller] Creating clusterRoleBinding for globalRoleBinding grb-cjlln for user u-gxgnd with role cattle-globalrole-user
+2019/12/05 11:19:43 [INFO] Creating new GlobalRoleBinding for GlobalRoleBinding grb-zxwlt
+2019/12/05 11:19:43 [INFO] [mgmt-auth-grb-controller] Creating clusterRoleBinding for globalRoleBinding grb-zxwlt for user u-sl69c with role cattle-globalrole-user
+2019/12/05 11:19:43 [INFO] Generating and uploading node config 
+2019/12/05 11:19:43 [INFO] Generating and uploading node config test2
+2019/12/05 11:19:43 [INFO] [mgmt-auth-users-controller] Deleting globalRoleBinding grb-cjlln for user u-gxgnd
+2019/12/05 11:19:43 [INFO] [mgmt-auth-users-controller] Deleting token token-6vb8w for user u-gxgnd
+2019/12/05 11:19:43 [ERROR] GlobalRoleBindingController grb-cjlln [grb-sync] failed with : globalrolebindings.management.cattle.io "grb-cjlln" not found
+2019/12/05 11:19:43 [ERROR] GlobalRoleBindingController grb-zxwlt [mgmt-auth-grb-controller] failed with : globalrolebindings.management.cattle.io "grb-zxwlt" not found
+2019/12/05 11:19:43 [INFO] [mgmt-auth-users-controller] Deleting token token-z7mng for user u-sl69c
+2019/12/05 11:19:43 [INFO] [mgmt-auth-users-controller] Deleting globalRoleBinding grb-dx6n7 for user u-rvkv5
+2019/12/05 11:19:43 [ERROR] UserController u-rvkv5 [mgmt-auth-users-controller] failed with : error deleting global role template grb-dx6n7: globalrolebindings.management.cattle.io "grb-dx6n7" not found
+2019/12/05 11:19:43 [INFO] Creating new GlobalRoleBinding for GlobalRoleBinding grb-r484k
+2019/12/05 11:19:43 [INFO] [mgmt-auth-grb-controller] Creating clusterRoleBinding for globalRoleBinding grb-r484k for user u-98bxp with role cattle-globalrole-user
+2019/12/05 11:19:44 [INFO] Creating new GlobalRoleBinding for GlobalRoleBinding grb-bl4bx
+2019/12/05 11:19:44 [INFO] [mgmt-auth-grb-controller] Creating clusterRoleBinding for globalRoleBinding grb-bl4bx for user u-f49hb with role cattle-globalrole-user
+2019/12/05 11:19:44 [ERROR] GlobalRoleBindingController grb-r484k [grb-sync] failed with : globalrolebindings.management.cattle.io "grb-r484k" not found
+2019/12/05 11:19:44 [INFO] [mgmt-auth-users-controller] Deleting token token-hnzjb for user u-98bxp
+2019/12/05 11:19:44 [INFO] [mgmt-auth-users-controller] Deleting token token-m8l85 for user u-rvkv5
+2019/12/05 11:19:44 [INFO] Deleting nodePool [np-cmx7l]
+2019/12/05 11:19:46 [INFO] [mgmt-auth-users-controller] Deleting globalRoleBinding grb-bl4bx for user u-f49hb
+2019/12/05 11:19:46 [ERROR] UserController u-f49hb [mgmt-auth-users-controller] failed with : error deleting global role template grb-bl4bx: globalrolebindings.management.cattle.io "grb-bl4bx" not found
+2019/12/05 11:19:46 [INFO] Shutting down ClusterTemplateRevisionController controller
+2019/12/05 11:19:46 [INFO] Shutting down ClusterTemplateController controller
+2019/12/05 11:19:46 [INFO] Shutting down KontainerDriverController controller
+2019/12/05 11:19:46 [INFO] Shutting down SecretController controller
+2019/12/05 11:19:46 [INFO] Shutting down NamespaceController controller
+2019/12/05 11:19:46 [INFO] Shutting down SecretController controller
+2019/12/05 11:19:46 [INFO] Shutting down SecretController controller
+2019/12/05 11:19:46 [INFO] Shutting down RoleController controller
+2019/12/05 11:19:46 [INFO] Shutting down RoleBindingController controller
+2019/12/05 11:19:46 [INFO] Shutting down ClusterRoleController controller
+2019/12/05 11:19:46 [INFO] Shutting down NodePoolController controller
+2019/12/05 11:19:46 [INFO] Shutting down RKEAddonController controller
+2019/12/05 11:19:46 [INFO] Shutting down RKEK8sServiceOptionController controller
+2019/12/05 11:19:46 [INFO] Shutting down RKEK8sSystemImageController controller
+2019/12/05 11:19:46 [INFO] Shutting down NodeTemplateController controller
+2019/12/05 11:19:46 [INFO] Shutting down ClusterRoleBindingController controller
+2019/12/05 11:19:46 [INFO] Shutting down SourceCodeRepositoryController controller
+2019/12/05 11:19:46 [INFO] Shutting down PipelineExecutionController controller
+2019/12/05 11:19:46 [INFO] Shutting down SourceCodeCredentialController controller
+2019/12/05 11:19:46 [INFO] Shutting down PipelineController controller
+2019/12/05 11:19:46 [INFO] Shutting down AppController controller
+2019/12/05 11:19:46 [INFO] Shutting down FeatureController controller
+2019/12/05 11:19:46 [INFO] Shutting down ListenConfigController controller
+2019/12/05 11:19:46 [INFO] Shutting down UserAttributeController controller
+2019/12/05 11:19:46 [INFO] Shutting down DynamicSchemaController controller
+2019/12/05 11:19:46 [INFO] Shutting down GlobalRoleController controller
+2019/12/05 11:19:46 [INFO] Shutting down GroupMemberController controller
+2019/12/05 11:19:46 [INFO] Shutting down TokenController controller
+2019/12/05 11:19:46 [INFO] Shutting down GlobalDNSController controller
+2019/12/05 11:19:46 [INFO] Shutting down ProjectRoleTemplateBindingController controller
+2019/12/05 11:19:46 [INFO] Shutting down MultiClusterAppRevisionController controller
+2019/12/05 11:19:46 [INFO] Shutting down UserController controller
+2019/12/05 11:19:46 [INFO] Shutting down PodSecurityPolicyTemplateController controller
+2019/12/05 11:19:46 [INFO] Shutting down ClusterController controller
+2019/12/05 11:19:46 [INFO] Shutting down CatalogTemplateController controller
+2019/12/05 11:19:46 [INFO] Shutting down ClusterRegistrationTokenController controller
+2019/12/05 11:19:46 [INFO] Shutting down ProjectLoggingController controller
+2019/12/05 11:19:46 [INFO] Shutting down ProjectController controller
+2019/12/05 11:19:46 [INFO] Shutting down SettingController controller
+2019/12/05 11:19:46 [FATAL] context canceled
+***END RANCHER LOGS***
+Makefile:11: recipe for target 'ci' failed

@@ -23,8 +23,6 @@ cleanup()
     return $EXIT
 }
 
-#[ "${ARCH}" == "amd64" ] && RACE=-race
-go test -cover -tags=test .././...
 
 if [ ${ARCH} == arm64 ]; then
     export ETCD_UNSUPPORTED_ARCH=arm64

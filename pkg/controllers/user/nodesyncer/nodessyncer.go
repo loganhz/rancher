@@ -214,6 +214,7 @@ func (m *nodesSyncer) syncLabels(key string, obj *v3.Node) (runtime.Object, erro
 
 	logrus.Infof("========== jiandao start syncLabels  1 ==========")
 	node, err := nodehelper.GetNodeForMachine(obj, m.nodeLister)
+	logrus.Errorf("logan to %v: %v", node, err)
 	if err != nil || node == nil {
 		return nil, err
 	}
@@ -406,6 +407,7 @@ func (m *nodesSyncer) removeNode(machine *v3.Node) error {
 }
 
 func (m *nodesSyncer) updateNode(existing *v3.Node, node *corev1.Node, pods map[string][]*corev1.Pod) error {
+	logrus.Infof("========== loganwww2 ==========")
 	toUpdate, err := m.convertNodeToMachine(node, existing, pods)
 	if err != nil {
 		return err
@@ -424,6 +426,7 @@ func (m *nodesSyncer) updateNode(existing *v3.Node, node *corev1.Node, pods map[
 }
 
 func (m *nodesSyncer) createNode(node *corev1.Node, pods map[string][]*corev1.Pod) error {
+	logrus.Infof("========== loganwww1 ==========")
 	// respect user defined name or label
 	if nodehelper.IgnoreNode(node.Name, node.Labels) {
 		logrus.Debugf("Skipping v3.node creation for [%v] node", node.Name)
@@ -596,7 +599,8 @@ func statusEqualTest(proposed, existing corev1.NodeStatus) bool {
 }
 
 func (m *nodesSyncer) convertNodeToMachine(node *corev1.Node, existing *v3.Node, pods map[string][]*corev1.Pod) (*v3.Node, error) {
-	var machine *v3.Node
+	logrus.Infof("========== loganwww ==========")
+        var machine *v3.Node
 	if existing == nil {
 		machine = &v3.Node{
 			Spec:   v3.NodeSpec{},

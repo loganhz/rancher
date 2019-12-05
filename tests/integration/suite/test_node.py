@@ -354,8 +354,7 @@ def test_add_node_label(admin_mc):
     testLabel = "test-label"
     client = admin_mc.client
     nodes = client.list_node(clusterId="local")
-    assert len(nodes.data) > 0
-    nodeId = nodes.data[0].id
+    nodeId = nodes.data[1].id
     node = client.by_id_node(nodeId)
 
     # Make sure there is no test label and add test label
@@ -369,7 +368,7 @@ def test_add_node_label(admin_mc):
     client.update(node, labels=node_labels)
 
     # Label should be added
-    time.sleep(2)
+    time.sleep(20)
     node = client.by_id_node(nodeId)
     node_labels = node.labels.data_dict()
     assert node_labels[testLabel] == "bar"
