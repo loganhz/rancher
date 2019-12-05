@@ -348,3 +348,28 @@ def test_no_node_template(user_mc):
     assert e.value.error.status == 404
     assert e.value.error.message == \
         "unable to find node template [%s]" % invalid_template_id
+
+
+def test_add_node_label(admin_mc):
+    testLabel = "test-label"
+    client = admin_mc.client
+    nodes = client.list_node(clusterId="local")
+    assert len(nodes.data) > 0
+    nodeId = nodes.data[0].id
+    node = client.by_id_node(nodeId)
+
+    # Make sure there is no test label and add test label
+    if "labels" in node:
+        node_labels = node.labels.data_dict()
+    else:
+        node_labels = {}
+
+    assert testLabel not in node_labels
+    node_labels[testLabel] = "bar"
+    client.update(node, labels=node_labels)
+
+    # Label should be added
+    time.sleep(2)
+    node = client.by_id_node(nodeId)
+    node_labels = node.labels.data_dict()
+    assert node_labels[testLabel] == "bar"
