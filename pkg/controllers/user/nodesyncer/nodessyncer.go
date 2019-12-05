@@ -212,19 +212,19 @@ func (m *nodesSyncer) syncLabels(key string, obj *v3.Node) (runtime.Object, erro
 		return nil, nil
 	}
 
-	logrus.Infof("========== jiandao start syncLabels  1 ==========", obj)
+	logrus.Infof("========== jiandao start syncLabels  1 ==========")
 	node, err := nodehelper.GetNodeForMachine(obj, m.nodeLister)
 	if err != nil || node == nil {
 		return nil, err
 	}
 
-	logrus.Infof("========== jiandao start syncLabels  2 ==========", node)
+	logrus.Infof("========== jiandao start syncLabels  2 ==========")
 	nodePlan, err := m.getNodePlan(obj)
 	if err != nil {
 		return obj, err
 	}
 
-	logrus.Infof("========== jiandao start syncLabels 3  ==========", nodePlan)
+	logrus.Infof("========== jiandao start syncLabels 3  ==========")
 	node, obj, err = m.updateLabels(node, obj, nodePlan)
 	if err != nil {
 		return obj, err
