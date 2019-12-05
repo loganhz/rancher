@@ -310,7 +310,7 @@ func (m *nodesSyncer) getNodePlan(node *v3.Node) (v3.RKEConfigNodePlan, error) {
 }
 
 func (m *nodesSyncer) reconcileAll() error {
-	logrus.Infof("========== loganww22w2 ==========")
+	logrus.Infof("========== loganww22w2 1==========")
 	// skip reconcile if we are restoring from backup,
 	// this is needed to avoid adding/deleting replaced nodes that might be in the
 	// snapshots before the cluster restore/reconcile is complete
@@ -322,20 +322,24 @@ func (m *nodesSyncer) reconcileAll() error {
 		}
 	}
 
+	logrus.Infof("========== loganww22w2 2==========")
 	nodes, err := m.nodeLister.List("", labels.NewSelector())
 	if err != nil {
 		return err
 	}
 
+	logrus.Infof("========== loganww22w2 3==========")
 	nodeMap := make(map[string]*corev1.Node)
 	for _, node := range nodes {
 		nodeMap[node.Name] = node
 	}
 
+	logrus.Infof("========== loganww22w2 4==========")
 	machines, err := m.machineLister.List(m.clusterNamespace, labels.NewSelector())
 	if err != nil {
 		return err
 	}
+	logrus.Infof("========== loganww22w2 5==========")
 	machineMap := make(map[string]*v3.Node)
 	toDelete := make(map[string]*v3.Node)
 	for _, machine := range machines {
@@ -350,11 +354,13 @@ func (m *nodesSyncer) reconcileAll() error {
 		}
 		machineMap[node.Name] = machine
 	}
+	logrus.Infof("========== loganww22w2 6==========")
 	nodeToPodMap, err := m.getNonTerminatedPods()
 	if err != nil {
 		return err
 	}
 
+	logrus.Infof("========== loganww22w2 7==========")
 	// reconcile machines for existing nodes
 	for name, node := range nodeMap {
 		machine := machineMap[name]
@@ -363,6 +369,7 @@ func (m *nodesSyncer) reconcileAll() error {
 			return err
 		}
 	}
+	logrus.Infof("========== loganww22w2 8==========")
 	// run the logic for machine to remove
 	for name, machine := range machineMap {
 		if _, ok := nodeMap[name]; !ok {
