@@ -102,6 +102,8 @@ func Start(ctx context.Context, localClusterEnabled bool, scaledContext *config.
 	root.Handle("/v3/settings/cacerts", rawAuthedAPIs).Methods(http.MethodGet)
 	root.Handle("/v3/settings/first-login", rawAuthedAPIs).Methods(http.MethodGet)
 	root.Handle("/v3/settings/ui-pl", rawAuthedAPIs).Methods(http.MethodGet)
+	root.Handle("/v3/settings/ui-footer-text", rawAuthedAPIs).Methods(http.MethodGet)
+	root.Handle("/v3/settings/ui-footer-url", rawAuthedAPIs).Methods(http.MethodGet)
 	root.Handle("/v3/tokenreview", tokenReview).Methods(http.MethodPost)
 	root.PathPrefix("/metrics").Handler(metricsHandler)
 	root.PathPrefix("/v3").Handler(chainGzip.Handler(auditHandler))
