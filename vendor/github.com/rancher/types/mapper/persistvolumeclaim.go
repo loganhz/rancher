@@ -20,7 +20,6 @@ func (p PersistVolumeClaim) ToInternal(data map[string]interface{}) error {
 	}
 	jsonOutput, _ = json.Marshal(data)
 	logrus.Info("loganpvc1" + string(jsonOutput))
-	values.RemoveValue(data, "storageClassId")
 	jsonOutput, _ = json.Marshal(data)
 	logrus.Info("loganpvc2" + string(jsonOutput))
 	return nil
