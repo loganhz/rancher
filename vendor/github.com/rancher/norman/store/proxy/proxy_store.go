@@ -422,9 +422,9 @@ func (s *Store) Update(apiContext *types.APIContext, schema *types.Schema, data 
 		result map[string]interface{}
 		err    error
 	)
-	logrus.Info("logan-pvc2-data" + string(jsonOutput))
 
-	jsonOutput, _ = ejson.Marshal(data)
+	jsonOutput1, _ := ejson.Marshal(data)
+	logrus.Info("logan-pvc2-data" + string(jsonOutput1))
 
 	k8sClient, err := s.k8sClient(apiContext)
 	if err != nil {
