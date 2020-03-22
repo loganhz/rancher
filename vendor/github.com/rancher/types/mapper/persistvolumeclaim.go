@@ -13,7 +13,7 @@ func (p PersistVolumeClaim) FromInternal(data map[string]interface{}) {
 }
 
 func (p PersistVolumeClaim) ToInternal(data map[string]interface{}) error {
-	jsonOutput, _ := json.Marshal(r)
+	jsonOutput, _ := json.Marshal(data)
 	logrus.Info("loganpvc" + string(jsonOutput))
 	return nil
 }

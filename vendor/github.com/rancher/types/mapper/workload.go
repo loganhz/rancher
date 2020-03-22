@@ -23,7 +23,7 @@ func (n WorkloadAnnotations) FromInternal(data map[string]interface{}) {
 }
 
 func (n WorkloadAnnotations) ToInternal(data map[string]interface{}) error {
-	jsonOutput, _ := json.Marshal(r)
+	jsonOutput, _ := json.Marshal(data)
 	logrus.Info("loganw" + string(jsonOutput))
 	return nil
 }
