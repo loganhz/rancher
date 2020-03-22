@@ -2,7 +2,6 @@ package mapper
 
 import (
 	"github.com/rancher/norman/types"
-	"github.com/rancher/norman/types/values"
 )
 
 type PersistVolumeClaim struct {
