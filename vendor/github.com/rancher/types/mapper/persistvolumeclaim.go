@@ -12,9 +12,6 @@ func (p PersistVolumeClaim) FromInternal(data map[string]interface{}) {
 }
 
 func (p PersistVolumeClaim) ToInternal(data map[string]interface{}) error {
-	if v, ok := values.GetValue(data, "storageClassId"); ok && v == nil {
-		values.PutValue(data, "", "storageClassId")
-	}
 	return nil
 }
 
