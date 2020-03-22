@@ -442,11 +442,23 @@ func (s *Store) Update(apiContext *types.APIContext, schema *types.Schema, data 
 			return nil, rawErr
 		}
 
+		jsonOutput, _ := ejson.Marshal(existing)
+
+		logrus.Info("logan-pvc0-existing" + string(jsonOutput))
+
+		jsonOutput, _ := ejson.Marshal(data)
+
+		logrus.Info("logan-pvc0-data" + string(jsonOutput))
+
 		existing = merge.APIUpdateMerge(schema.InternalSchema, apiContext.Schemas, existing, data, apiContext.Option("replace") == "true")
 
 		values.PutValue(existing, resourceVersion, "metadata", "resourceVersion")
 		values.PutValue(existing, namespace, "metadata", "namespace")
 		values.PutValue(existing, id, "metadata", "name")
+
+		jsonOutput, _ := ejson.Marshal(existing)
+
+		logrus.Info("logan-pvc1-existing" + string(jsonOutput))
 
 		req = s.common(namespace, k8sClient.Put()).
 			Body(&unstructured.Unstructured{
