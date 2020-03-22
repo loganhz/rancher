@@ -410,10 +410,13 @@ func (s *Store) toInternal(mapper types.Mapper, data map[string]interface{}) err
 
 	if s.group == "" {
 		data["apiVersion"] = s.version
+		logrus.Info("logan666" + data["apiVersion"])
 	} else {
 		data["apiVersion"] = s.group + "/" + s.version
+		logrus.Info("logan6661" + data["apiVersion"])
 	}
 	data["kind"] = s.kind
+	logrus.Info("logan6662" + data["kind"])
 	return nil
 }
 
