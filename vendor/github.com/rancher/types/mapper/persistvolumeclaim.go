@@ -3,6 +3,7 @@ package mapper
 import (
 	"encoding/json"
 	"github.com/rancher/norman/types"
+	"github.com/rancher/norman/types/values"
 	"github.com/sirupsen/logrus"
 )
 
@@ -14,7 +15,12 @@ func (p PersistVolumeClaim) FromInternal(data map[string]interface{}) {
 
 func (p PersistVolumeClaim) ToInternal(data map[string]interface{}) error {
 	jsonOutput, _ := json.Marshal(data)
-	logrus.Info("loganpvc" + string(jsonOutput))
+	if v, ok := values.GetValue(data, "storageClassId"); ok && v == nil {
+		values.PutValue(data, "", "storageClassId")
+	}
+	logrus.Info("loganpvc1" + string(jsonOutput))
+	values.RemoveValue(data, "storageClassId")
+	logrus.Info("loganpvc2" + string(jsonOutput))
 	return nil
 }
 
