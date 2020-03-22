@@ -446,7 +446,7 @@ func (s *Store) Update(apiContext *types.APIContext, schema *types.Schema, data 
 
 		logrus.Info("logan-pvc0-existing" + string(jsonOutput))
 
-		jsonOutput, _ := ejson.Marshal(data)
+		jsonOutput, _ = ejson.Marshal(data)
 
 		logrus.Info("logan-pvc0-data" + string(jsonOutput))
 
@@ -456,7 +456,7 @@ func (s *Store) Update(apiContext *types.APIContext, schema *types.Schema, data 
 		values.PutValue(existing, namespace, "metadata", "namespace")
 		values.PutValue(existing, id, "metadata", "name")
 
-		jsonOutput, _ := ejson.Marshal(existing)
+		jsonOutput, _ = ejson.Marshal(existing)
 
 		logrus.Info("logan-pvc1-existing" + string(jsonOutput))
 
