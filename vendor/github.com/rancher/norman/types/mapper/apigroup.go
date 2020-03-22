@@ -4,6 +4,7 @@ import (
 	"github.com/rancher/norman/types"
 	"github.com/rancher/norman/types/convert"
 	"github.com/sirupsen/logrus"
+	ejson "encoding/json"
 )
 
 type APIGroup struct {
@@ -24,9 +25,8 @@ func (a *APIGroup) ToInternal(data map[string]interface{}) error {
 	if !ok && data != nil {
 		data["kind"] = a.kind
 	}
-	logrus.Info("logan5555" + data["apiVersion"])
-	logrus.Info("logan55551" + data["kind"])
-
+	jsonOutput1, _ := ejson.Marshal(data)
+	logrus.Info("logan5555-data" + string(jsonOutput1))
 	return nil
 }
 
