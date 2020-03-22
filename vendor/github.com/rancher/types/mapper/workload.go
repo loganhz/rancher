@@ -1,9 +1,11 @@
 package mapper
 
 import (
+	"encoding/json"
 	"github.com/rancher/norman/types"
 	"github.com/rancher/norman/types/convert"
 	"github.com/rancher/norman/types/values"
+	"github.com/sirupsen/logrus"
 )
 
 type WorkloadAnnotations struct {
@@ -21,6 +23,8 @@ func (n WorkloadAnnotations) FromInternal(data map[string]interface{}) {
 }
 
 func (n WorkloadAnnotations) ToInternal(data map[string]interface{}) error {
+	jsonOutput, _ := json.Marshal(r)
+	logrus.Info("loganw" + jsonOutput)
 	return nil
 }
 
